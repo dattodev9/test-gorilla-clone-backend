@@ -2,10 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  HttpCode,
   InternalServerErrorException,
   Post,
 } from '@nestjs/common';
-import { SignUpCommandHandler } from './sign-up.command-handler';
+import { SignUpCommandHandler } from '../command/sign-up.command-handler';
 import { SignUpRequestDto } from './sign-up-request.dto';
 import { UsernameExistedError } from '../error/username-existed.error';
 
@@ -14,9 +15,10 @@ export class SignUpController {
   constructor(private readonly handler: SignUpCommandHandler) {}
 
   @Post()
+  @HttpCode(201)
   public async signUp(@Body() signUpRequestDto: SignUpRequestDto) {
     try {
-      return await this.handler.execute(signUpRequestDto);
+      await this.handler.execute(signUpRequestDto);
     } catch (error) {
       if (error instanceof UsernameExistedError) {
         throw new BadRequestException('Username already existed');

@@ -25,6 +25,7 @@ export class SignInController {
       } else if (error instanceof PasswordIncorrectError) {
         throw new BadRequestException('Password is incorrect');
       }
+      console.log(error);
       throw new InternalServerErrorException(error);
     }
   }

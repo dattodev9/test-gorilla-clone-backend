@@ -6,14 +6,14 @@ import * as bcrypt from 'bcrypt';
 import { UserNotFoundError } from '../error/user-not-found.error';
 import { SignInCommand } from './sign-in.command';
 import { PasswordIncorrectError } from '../error/password-incorrect.error';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService } from '../../../../shared/modules/jwt-auth/jwt.service';
 
 Inject();
+
 export class SignInCommandHandler {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-
     private jwtService: JwtService,
   ) {}
 
@@ -37,13 +37,16 @@ export class SignInCommandHandler {
       throw new PasswordIncorrectError();
     }
 
-    return true;
+    const payload = { sub: userInfo.id, username: userInfo.username };
+
+    return this.jwtService.generateToken(payload);
   }
 
   private async validatePassword(
     requestPassword: string,
     userPassword: string,
   ) {
+    console.log(userPassword);
     return await bcrypt.compare(requestPassword, userPassword);
   }
 }

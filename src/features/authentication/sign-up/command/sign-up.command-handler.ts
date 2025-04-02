@@ -2,18 +2,19 @@ import { Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
-import { SignUpCommand } from '../controller/sign-up.command';
+import { SignUpCommand } from './sign-up.command';
 import * as bcrypt from 'bcrypt';
 import { UsernameExistedError } from '../error/username-existed.error';
 
 Inject();
+
 export class SignUpCommandHandler {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
 
-  public async execute(command: SignUpCommand): Promise<User> {
+  public async execute(command: SignUpCommand): Promise<undefined> {
     const userExisted = await this.userRepository.findOne({
       where: { username: command.username },
     });
@@ -24,7 +25,7 @@ export class SignUpCommandHandler {
 
     const hashedPassword = await this.hashPassword(command.password);
 
-    return this.userRepository.save({
+    await this.userRepository.save({
       username: command.username,
       password: hashedPassword,
       name: command.name,
@@ -32,8 +33,7 @@ export class SignUpCommandHandler {
   }
 
   private async hashPassword(password: string): Promise<string> {
-    const saltOrRounds = 10;
-    console.log(password);
-    return await bcrypt.hash(password, saltOrRounds);
+    const SALT_ROUND = 10;
+    return await bcrypt.hash(password, SALT_ROUND);
   }
 }

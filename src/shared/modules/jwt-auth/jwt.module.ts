@@ -1,17 +1,25 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule as NestJwtModule } from '@nestjs/jwt';
+import {
+  JwtModule as NestJwtModule,
+  JwtService as NestJwtService,
+} from '@nestjs/jwt';
+import { JwtService } from './jwt.service';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     NestJwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('TOKEN_PRIVATE_KEY'),
+        signOptions: { expiresIn: '60s' },
+        global: true,
       }),
     }),
   ],
-  providers: [],
+  providers: [ConfigService, NestJwtService, JwtService],
+  exports: [JwtService],
 })
 export class JwtModule {}
