@@ -71,7 +71,8 @@ export class SignInCommandHandler {
     });
 
     return res.status(200).json({
-      isFirstTimeLogin: userInfo.isFirstTimeLogin
+      username: userInfo.username,
+      isFirstTimeChangePassword: userInfo.isFirstTimeChangePassword
     })
   }
 

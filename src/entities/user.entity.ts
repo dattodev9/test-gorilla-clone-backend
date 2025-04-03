@@ -34,9 +34,9 @@ export class User {
   role: UserRole;
 
   @Column({
-    default: true
+    default: false
   })
-  isFirstTimeLogin: boolean;
+  isFirstTimeChangePassword: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

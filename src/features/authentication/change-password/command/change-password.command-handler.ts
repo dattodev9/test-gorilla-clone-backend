@@ -30,7 +30,8 @@ export class ChangePasswordCommandHandler {
         return await this.userRepository.update({
             username: command.username,
         }, {
-            password: hashedPassword
+            password: hashedPassword,
+            isFirstTimeChangePassword: true
         })
     }
 
