@@ -33,6 +33,11 @@ export class User {
   })
   role: UserRole;
 
+  @Column({
+    default: false
+  })
+  isFirstTimeLogin: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 }

@@ -9,11 +9,11 @@ export class JwtService {
     private readonly configService: ConfigService,
   ) {}
 
-  async generateToken(payload: any): Promise<string> {
+  async generateToken(payload: any, expiresIn: string): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('TOKEN_PRIVATE_KEY'),
-      expiresIn: '60s',
+      expiresIn: expiresIn,
     });
   }
 

@@ -10,7 +10,7 @@ import { SignUpCommandHandler } from '../command/sign-up.command-handler';
 import { SignUpRequestDto } from './sign-up-request.dto';
 import { UsernameExistedError } from '../error/username-existed.error';
 
-@Controller('/signUp')
+@Controller('/sign-up')
 export class SignUpController {
   constructor(private readonly handler: SignUpCommandHandler) {}
 

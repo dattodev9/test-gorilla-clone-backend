@@ -7,6 +7,7 @@ import { UserNotFoundError } from '../error/user-not-found.error';
 import { SignInCommand } from './sign-in.command';
 import { PasswordIncorrectError } from '../error/password-incorrect.error';
 import { JwtService } from '../../../../shared/modules/jwt-auth/jwt.service';
+import { Response } from 'express';
 
 Inject();
 
@@ -17,7 +18,7 @@ export class SignInCommandHandler {
     private jwtService: JwtService,
   ) {}
 
-  public async execute(command: SignInCommand) {
+  public async execute(res: Response, command: SignInCommand) {
     const userInfo = await this.userRepository.findOne({
       where: {
         username: command.username,
@@ -39,14 +40,43 @@ export class SignInCommandHandler {
 
     const payload = { sub: userInfo.id, username: userInfo.username };
 
-    return this.jwtService.generateToken(payload);
+    const accessToken = await this.jwtService.generateToken(
+      {
+        ...payload,
+        type: 'accessToken',
+      },
+      '15m',
+    );
+
+    const refreshToken = await this.jwtService.generateToken(
+      {
+        ...payload,
+        type: 'refreshToken',
+      },
+      '7d',
+    );
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.send();
   }
 
   private async validatePassword(
     requestPassword: string,
     userPassword: string,
   ) {
-    console.log(userPassword);
     return await bcrypt.compare(requestPassword, userPassword);
   }
 }
