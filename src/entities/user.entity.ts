@@ -34,7 +34,7 @@ export class User {
   role: UserRole;
 
   @Column({
-    default: false
+    default: true
   })
   isFirstTimeLogin: boolean;
 

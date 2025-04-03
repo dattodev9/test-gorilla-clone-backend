@@ -70,7 +70,9 @@ export class SignInCommandHandler {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.send();
+    return res.status(200).json({
+      isFirstTimeLogin: userInfo.isFirstTimeLogin
+    })
   }
 
   private async validatePassword(

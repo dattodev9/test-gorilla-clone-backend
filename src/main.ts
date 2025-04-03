@@ -6,9 +6,10 @@ import 'reflect-metadata';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser());
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 8081;
   await app.listen(port);
   console.log('Running on port: ', port);
 }
