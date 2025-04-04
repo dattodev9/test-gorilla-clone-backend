@@ -1,5 +1,12 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ForbiddenException, Inject, Injectable, NestMiddleware } from '@nestjs/common';
+import { TokenExpiredError } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cache } from 'cache-manager';
 import { Request, Response, NextFunction } from 'express';
 import { User } from 'src/entities/user.entity';
 import { JwtService } from 'src/shared/modules/jwt-auth/jwt.service';
@@ -9,33 +16,73 @@ import { Repository } from 'typeorm';
 export class AuthenticationMiddleware implements NestMiddleware {
     constructor(
         @InjectRepository(User)
-        private userRepository: Repository<User>,
-        private jwtService: JwtService,
-    ) { };
+        private readonly userRepository: Repository<User>,
+        private readonly jwtService: JwtService,
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    ) {}
+
     async use(req: Request, res: Response, next: NextFunction) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const accessToken = req.cookies["accessToken"];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const refreshToken = req.cookies["refreshToken"];
+        try {
+            const accessToken = req.cookies['accessToken'];
 
-        if (!accessToken || !refreshToken) {
-            return false;
+            if (!accessToken) {
+                throw new ForbiddenException('Access token is missing or invalid');
+            }
+
+            try {
+                const accessTokenPayload = await this.jwtService.verifyToken(accessToken);
+                await this.validateUser(accessTokenPayload.username);
+                res.set('username', accessTokenPayload.username);
+                return next(); 
+            } catch (error) {
+                if (error instanceof TokenExpiredError) {
+                    console.log('Access token expired, attempting to validate refresh token');
+                    await this.handleRefreshToken(req, res, next);
+                    return;
+                } else {
+                    throw new ForbiddenException('Access token is invalid');
+                }
+            }
+        } catch (error) {
+            console.error('Authentication error:', error.message);
+            res.status(403).json({ message: 'Authentication failed' }); 
+        }
+    }
+
+    private async handleRefreshToken(req: Request, res: Response, next: NextFunction) {
+        const refreshToken = req.cookies['refreshToken'];
+
+        if (!refreshToken) {
+            throw new ForbiddenException('Refresh token is missing or invalid');
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-        const accessPayload = await this.jwtService.verifyToken(accessToken);
+        const refreshTokenPayload = await this.jwtService.verifyToken(refreshToken);
+        const username = refreshTokenPayload?.username;
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-        const refreshPayload = await this.jwtService.verifyToken(refreshToken);
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (!accessPayload || !refreshPayload || !(accessPayload["username"] == refreshPayload["username"])) {
-            return false;
+        const cachedRefreshToken = await this.cacheManager.get<string>(`refreshToken-${username}`);
+        if (refreshToken !== cachedRefreshToken) {
+            throw new ForbiddenException('Refresh token is invalid');
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        const username: string = accessPayload?.["username"];
+        const { type, iat, exp, ...newAccessTokenPayload } = refreshTokenPayload;
 
+        const newAccessToken = await this.jwtService.generateToken(
+            { ...newAccessTokenPayload, type: 'accessToken' },
+            '15m',
+        );
+
+        res.cookie('accessToken', newAccessToken, {
+            httpOnly: true,
+            sameSite: 'strict',
+            path: '/',
+            maxAge: 15 * 60 * 1000,
+        });
+
+        res.set('username', username);
+        next();
+    }
+
+    private async validateUser(username: string) {
         const userInfo = await this.userRepository.findOne({
             select: {
                 username: true,
@@ -43,17 +90,11 @@ export class AuthenticationMiddleware implements NestMiddleware {
                 role: true,
                 isFirstTimeChangePassword: true,
             },
-            where: {
-                username: username,
-            },
+            where: { username },
         });
 
         if (!userInfo) {
-            return false;
+            throw new ForbiddenException('User not found or invalid');
         }
-
-        res.set("username", username);
-
-        next();
     }
 }

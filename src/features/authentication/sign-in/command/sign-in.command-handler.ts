@@ -8,6 +8,8 @@ import { SignInCommand } from './sign-in.command';
 import { PasswordIncorrectError } from '../error/password-incorrect.error';
 import { JwtService } from '../../../../shared/modules/jwt-auth/jwt.service';
 import { Response } from 'express';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 Inject();
 
@@ -16,7 +18,8 @@ export class SignInCommandHandler {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
-  ) {}
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
+  ) { }
 
   public async execute(res: Response, command: SignInCommand) {
     const userInfo = await this.userRepository.findOne({
@@ -55,6 +58,8 @@ export class SignInCommandHandler {
       },
       '7d',
     );
+
+    await this.cacheManager.set(`refreshToken-${userInfo.username}`, refreshToken);
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,

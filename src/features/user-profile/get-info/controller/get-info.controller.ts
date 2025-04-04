@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, InternalServerErrorException, Req } from "@nestjs/common";
+import { Controller, Get, InternalServerErrorException, Req } from "@nestjs/common";
 import { GetInfoCommandHandler } from "../command/get-info.command-handler";
 import { Request } from "express";
 

@@ -14,7 +14,6 @@ import { JwtService } from './jwt.service';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('TOKEN_PRIVATE_KEY'),
-        signOptions: { expiresIn: '60s' },
         global: true,
       }),
     }),
