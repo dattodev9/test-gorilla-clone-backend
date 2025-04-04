@@ -5,7 +5,6 @@ import { AuthenticationModule } from './features/authentication/authentication.m
 import { UserProfileModule } from './features/user-profile/user-profile.module';
 import { AuthenticationMiddleware } from './middlewares/authentication.middlewares';
 import { CacheModule } from '@nestjs/cache-manager';
-import { GetInfoController } from './features/user-profile/get-info/controller/get-info.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtModule } from './shared/modules/jwt-auth/jwt.module';
@@ -26,6 +25,6 @@ export class AppModule implements NestModule {
       .exclude(
         { path: '/sign-in', method: RequestMethod.POST },
       )
-      .forRoutes(GetInfoController);
+      .forRoutes('*');
   }
 }

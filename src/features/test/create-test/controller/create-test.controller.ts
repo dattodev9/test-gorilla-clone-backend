@@ -3,7 +3,7 @@ import { CreateTestCommandHandler } from "../command/create-test.command-handler
 import { CreateTestRequestDto } from "./create-test-request.dto";
 
 @Controller("/test")
-export class TestController{
+export class CreateTestController{
     constructor(private readonly handler: CreateTestCommandHandler){}
 
     @Post()
