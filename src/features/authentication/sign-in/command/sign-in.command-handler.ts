@@ -71,9 +71,8 @@ export class SignInCommandHandler {
     });
 
     return res.status(200).json({
-      username: userInfo.username,
-      isFirstTimeChangePassword: userInfo.isFirstTimeChangePassword
-    })
+      message: "Sign in successful"
+    });
   }
 
   private async validatePassword(

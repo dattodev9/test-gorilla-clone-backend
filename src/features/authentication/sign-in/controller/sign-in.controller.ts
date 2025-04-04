@@ -19,7 +19,7 @@ export class SignInController {
   constructor(private readonly handler: SignInCommandHandler) {}
 
   @Post()
-  @HttpCode(200)
+  @HttpCode(204)
   public async signIn(
     @Res() res: Response,
     @Body() signInRequestDto: SignInRequestDto,
