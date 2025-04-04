@@ -36,7 +36,7 @@ export class User {
   @Column({
     default: false
   })
-  isFirstTimeChangePassword: boolean;
+  hasChangedPassword: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

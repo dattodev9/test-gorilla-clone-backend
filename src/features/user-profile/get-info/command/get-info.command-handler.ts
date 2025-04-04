@@ -20,7 +20,7 @@ export class GetInfoCommandHandler {
         username: true,
         name: true,
         role: true,
-        isFirstTimeChangePassword: true,
+        hasChangedPassword: true,
       },
       where: {
         username: username,

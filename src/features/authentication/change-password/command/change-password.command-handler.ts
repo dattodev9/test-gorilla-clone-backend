@@ -31,7 +31,7 @@ export class ChangePasswordCommandHandler {
             username: command.username,
         }, {
             password: hashedPassword,
-            isFirstTimeChangePassword: true
+            hasChangedPassword: true
         })
     }
 

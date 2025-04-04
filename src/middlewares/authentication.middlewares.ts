@@ -88,7 +88,7 @@ export class AuthenticationMiddleware implements NestMiddleware {
                 username: true,
                 name: true,
                 role: true,
-                isFirstTimeChangePassword: true,
+                hasChangedPassword: true,
             },
             where: { username },
         });

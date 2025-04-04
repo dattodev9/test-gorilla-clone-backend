@@ -9,11 +9,12 @@ import { GetInfoController } from './features/user-profile/get-info/controller/g
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtModule } from './shared/modules/jwt-auth/jwt.module';
+import { TestModule } from './features/test/test.module';
 
 @Module({
   imports: [ConfigModule.forRoot(), CacheModule.register({
     isGlobal: true
-  }), PostgresModule, AuthenticationModule, UserProfileModule, TypeOrmModule.forFeature([User]), JwtModule],
+  }), PostgresModule, AuthenticationModule, UserProfileModule, TypeOrmModule.forFeature([User]), JwtModule, TestModule],
   controllers: [],
   providers: [],
 })
