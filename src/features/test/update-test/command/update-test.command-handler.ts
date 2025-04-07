@@ -4,7 +4,7 @@ import { Test } from '../../../../entities/test.entity';
 import { Repository } from 'typeorm';
 import { UpdateTestCommand } from './update-test.command';
 import { TestNotFoundError } from '../error/test-not-found.error';
-import { createUpdateData } from '../../../../common/create-update-data';
+import { removeUndefinedAttribute } from '../../../../common/remove-undefined-attribute';
 
 Inject();
 
@@ -25,7 +25,7 @@ export class UpdateTestCommandHandler{
       throw new TestNotFoundError();
     }
 
-    const updateData: Partial<Test> = createUpdateData<Test>(command);
+    const updateData: Partial<Test> = removeUndefinedAttribute<Test>(command);
 
     await this.testRepository.update({
       id: id,
