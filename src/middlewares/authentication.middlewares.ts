@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ForbiddenException, Inject, Injectable, NestMiddleware } from '@nestjs/common';
-import { TokenExpiredError } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Request, Response, NextFunction } from 'express';
@@ -25,27 +24,19 @@ export class AuthenticationMiddleware implements NestMiddleware {
         try {
             const accessToken = req.cookies['accessToken'];
 
-            if (!accessToken) {
-                throw new ForbiddenException('Access token is missing or invalid');
-            }
-
-            try {
+            if (accessToken) {
                 const accessTokenPayload = await this.jwtService.verifyToken(accessToken);
                 await this.validateUser(accessTokenPayload.username);
                 res.set('username', accessTokenPayload.username);
-                return next(); 
-            } catch (error) {
-                if (error instanceof TokenExpiredError) {
-                    console.log('Access token expired, attempting to validate refresh token');
-                    await this.handleRefreshToken(req, res, next);
-                    return;
-                } else {
-                    throw new ForbiddenException('Access token is invalid');
-                }
+                return next();
+            } else {
+                console.log('Access token expired, attempting to validate refresh token');
+                await this.handleRefreshToken(req, res, next);
             }
         } catch (error) {
-            console.error('Authentication error:', error.message);
-            res.status(403).json({ message: 'Authentication failed' }); 
+            console.log('Access token expired, attempting to validate refresh token');
+            await this.handleRefreshToken(req, res, next);
+            return;
         }
     }
 
