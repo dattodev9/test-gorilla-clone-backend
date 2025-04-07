@@ -1,3 +1,5 @@
-import { PageOptionsDto } from "src/common/page-option.dto"
+import { PaginationRequestDto } from "src/common/pagination/pagination-request-dto"
 
-export class GetTestCommand extends PageOptionsDto {};
+export class GetTestCommand extends PaginationRequestDto {
+  name: string;
+}

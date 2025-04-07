@@ -6,7 +6,7 @@ enum ORDER {
     DESC = "desc"
 }
 
-export class PageOptionsDto {
+export class PaginationRequestDto {
     @Type(() => Number)
     @IsInt()
     @Min(1)
@@ -16,15 +16,15 @@ export class PageOptionsDto {
     @Type(() => Number)
     @IsInt()
     @Min(1)
-    @Max(50)
+    @Max(20)
     @IsOptional()
-    take?: number = 10;
+    size?: number = 10;
 
     @IsOptional()
     @IsEnum(ORDER)
-    order: ORDER = ORDER.ASC;
+    direction: ORDER = ORDER.DESC;
     
     @IsOptional()
     @IsString()
-    orderKey: string;
+    sortBy: string = "createdAt";
 }
