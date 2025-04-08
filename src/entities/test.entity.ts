@@ -3,7 +3,16 @@ import {
     Column,
     PrimaryGeneratedColumn,
     CreateDateColumn,
+    OneToMany,
 } from 'typeorm';
+import { OneChoiceQuestion } from './one-choice-question.entity';
+import { MultipleChoiceQuestion } from './multiple-choice-question.entity';
+
+export enum TestStatus {
+    DRAFT = 'draft',
+    ACTIVE = 'active',
+    ARCHIVE = 'archive',
+}
 
 @Entity()
 export class Test {
@@ -17,15 +26,16 @@ export class Test {
     description: string;
 
     @Column({
-        default: 0
+        default: TestStatus.DRAFT
     })
-    questionCount: number;
-
-    @Column({
-        default: 0
-    })
-    duration: number;
+    status: TestStatus;
 
     @CreateDateColumn()
     createdAt: Date;
+
+    @OneToMany(() => OneChoiceQuestion, (oneChoiceQuestion) => oneChoiceQuestion.test)
+    oneChoiceQuestions: OneChoiceQuestion[]
+    
+    @OneToMany(() => MultipleChoiceQuestion, (multipleChoiceQuestion) => multipleChoiceQuestion.test)
+    multipleChoiceQuestions: MultipleChoiceQuestion[]
 }

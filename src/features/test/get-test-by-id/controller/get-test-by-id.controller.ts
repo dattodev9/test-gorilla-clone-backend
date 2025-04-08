@@ -6,10 +6,10 @@ import { GetTestByIdCommandHandler } from '../command/get-test-by-id.command-han
 export class GetTestByIdController{
   constructor(private handler: GetTestByIdCommandHandler) {
   }
-  @Get("/:id")
+  @Get(":id")
     public async getTestById(@Param("id") id: string){
     try {
-      return await this.handler.getTestById(id);
+      return await this.handler.execute(id);
     } catch (error) {
       console.error(error);
        if(error instanceof TestNotFoundError){
