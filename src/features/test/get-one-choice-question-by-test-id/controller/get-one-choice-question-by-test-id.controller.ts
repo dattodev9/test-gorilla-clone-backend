@@ -1,0 +1,17 @@
+import { Controller, Get, InternalServerErrorException, Param } from '@nestjs/common';
+import { GetOneChoiceQuestionCommandHandler } from '../command/get-one-choice-question.command-handler';
+
+@Controller("/one-choice-question")
+export class GetOneChoiceQuestionByTestIdController {
+  constructor(private handler: GetOneChoiceQuestionCommandHandler) {}
+  @Get(":testId")
+  public async getOneChoiceQuestionByTestId(@Param("testId") testId: string) {
+    try {
+      return await this.handler.execute(testId);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException("Something went wrong");
+    }
+
+  }
+}

@@ -15,10 +15,28 @@ import { OneChoiceQuestion } from "src/entities/one-choice-question.entity";
 import { CreateOneChoiceQuestionCommandHandler } from './create-one-choice-question/command/create-one-choice-question.command-handler';
 import { CreateOneChoiceQuestionController } from "./create-one-choice-question/controller/create-one-choice-question.controller";
 import { MultipleChoiceQuestion } from "src/entities/multiple-choice-question.entity";
+import {
+  GetOneChoiceQuestionByTestIdController
+} from './get-one-choice-question-by-test-id/controller/get-one-choice-question-by-test-id.controller';
+import {
+  GetOneChoiceQuestionCommandHandler
+} from './get-one-choice-question-by-test-id/command/get-one-choice-question.command-handler';
+import {
+  UpdateOneChoiceQuestionController
+} from './update-one-choice-question/controller/update-one-choice-question.controller';
+import {
+  UpdateOneChoiceQuestionCommandHandler
+} from './update-one-choice-question/command/update-one-choice-question.command-handler';
+import {
+  DeleteOneChoiceQuestionController
+} from './delete-one-choice-question/controller/delete-one-choice-question.controller';
+import {
+  DeleteOneChoiceQuestionCommandHandler
+} from './delete-one-choice-question/command/delete-one-choice-question.command-handler';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Test, OneChoiceQuestion, MultipleChoiceQuestion]),],
-  controllers: [CreateTestController, GetTestController, GetTestByIdController, UpdateTestController, DeleteTestController, CreateOneChoiceQuestionController],
-  providers: [CreateTestCommandHandler, GetTestCommandHandler, GetTestByIdCommandHandler, UpdateTestCommandHandler, DeleteTestCommandHandler, CreateOneChoiceQuestionCommandHandler],
+  controllers: [CreateTestController, GetTestController, GetTestByIdController, UpdateTestController, DeleteTestController, CreateOneChoiceQuestionController, GetOneChoiceQuestionByTestIdController, UpdateOneChoiceQuestionController, DeleteOneChoiceQuestionController],
+  providers: [CreateTestCommandHandler, GetTestCommandHandler, GetTestByIdCommandHandler, UpdateTestCommandHandler, DeleteTestCommandHandler, CreateOneChoiceQuestionCommandHandler, GetOneChoiceQuestionCommandHandler, UpdateOneChoiceQuestionCommandHandler, DeleteOneChoiceQuestionCommandHandler],
 })
 export class TestModule {}

@@ -49,7 +49,7 @@ export class GetTestByIdCommandHandler {
               WHERE t.id = '${id}'
           `;
       
-          const result: TestResponse = await AppDataSource.query(query);
-          return result;
+          const result: TestResponse[] = await AppDataSource.query(query);
+          return result[0];
       }
 }
