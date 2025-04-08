@@ -5,7 +5,7 @@ export class CreateOneChoiceQuestionCommand {
 
     content: string;
 
-    choice: Choice[];
+    choices: Choice[];
 
     key: string;
     

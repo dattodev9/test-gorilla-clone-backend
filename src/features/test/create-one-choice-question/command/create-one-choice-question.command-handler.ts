@@ -13,6 +13,22 @@ export class CreateOneChoiceQuestionCommandHandler {
     ) { }
 
     public async execute(command: CreateOneChoiceQuestionCommand) {
-        await this.oneChoiceQuestionRepository.save(command);
-    }   
+        console.log(command);
+        await this.oneChoiceQuestionRepository.save(this.oneChoiceQuestionRepository.create({
+            name: command.name,
+            content: command.content,
+            choices: command.choices.map((choice) => {
+                return ({
+                    key: choice.key,
+                    value: choice.value
+                })
+            }),
+            key: command.key,
+            time: command.time,
+            order: command.order,
+            test: {
+                id: command.testId
+            }
+        }));
+    }
 }

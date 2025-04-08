@@ -10,7 +10,7 @@ export class CreateOneChoiceQuestionRequestDto {
     @Length(2, 50)
     content: string;
 
-    choice: Choice[];
+    choices: Choice[];
 
     @IsString()
     key: string;
