@@ -71,7 +71,7 @@ export class GetTestCommandHandler {
             ORDER BY t.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
             LIMIT ${take} OFFSET ${skip}
         `;
-    
+
         const result: TestResponse[] = await AppDataSource.query(query);
         return result;
     }
@@ -82,8 +82,9 @@ export class GetTestCommandHandler {
             COUNT(*)
             FROM test t
             ${name ? `WHERE t.name ILIKE '%${name}%'` : ''}
+            ORDER BY t.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
         `;
-    
+
         const result: { count: string }[] = await AppDataSource.query(query);
         return Number(result[0].count);
     }
