@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OneChoiceQuestion } from '../../../../entities/one-choice-question.entity';
+import { OneChoiceQuestion } from '../../../../../entities/one-choice-question.entity';
 import { Repository } from 'typeorm';
 
 Inject();

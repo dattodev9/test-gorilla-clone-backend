@@ -29,18 +29,19 @@ export class GetTestCommandHandler {
         const skip = (page - 1) * size;
         const take = size;
 
-        const data = await this.findAll(skip, take, camelToSnakeCase(sortBy), direction, name);
+        const data = await this.findAllQuestions(skip, take, camelToSnakeCase(sortBy), direction, name);
+        const dataLength: number = await this.getCount(camelToSnakeCase(sortBy), direction, name);
 
         return {
             data,
             page,
             size,
-            total: data.length,
-            totalPages: Math.ceil(data.length / size),
+            total: dataLength,
+            totalPages: Math.ceil(dataLength / size),
         };
     }
 
-    async findAll(skip: number, take: number, sortBy: string, direction: string, name?: string) {
+    async findAllQuestions(skip: number, take: number, sortBy: string, direction: string, name?: string) {
         const query = `
             SELECT 
                 t.*,
@@ -72,5 +73,17 @@ export class GetTestCommandHandler {
     
         const result: TestResponse[] = await AppDataSource.query(query);
         return result;
+    }
+
+    async getCount(sortBy: string, direction: string, name?: string): Promise<number> {
+        const query = `
+            SELECT 
+            COUNT(*)
+            FROM test t
+            ${name ? `WHERE t.name ILIKE '%${name}%'` : ''}
+        `;
+    
+        const result: { count: string }[] = await AppDataSource.query(query);
+        return Number(result[0].count);
     }
 }

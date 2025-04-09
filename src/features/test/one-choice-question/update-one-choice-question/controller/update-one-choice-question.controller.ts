@@ -1,7 +1,7 @@
 import { Body, Controller, InternalServerErrorException, NotFoundException, Param, Patch } from '@nestjs/common';
 import { UpdateOneChoiceQuestionCommandHandler } from '../command/update-one-choice-question.command-handler';
 import { UpdateOneChoiceQuestionRequestDto } from './update-one-choice-question-request.dto';
-import { TestNotFoundError } from '../../delete-test/error/test-not-found.error';
+import { TestNotFoundError } from '../../../delete-test/error/test-not-found.error';
 import { OneChoiceQuestionNotFound } from '../error/one-choice-question-not-found.error';
 
 @Controller('/one-choice-question')
