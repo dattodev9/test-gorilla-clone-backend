@@ -33,9 +33,13 @@ export class Test {
     @CreateDateColumn()
     createdAt: Date;
 
-    @OneToMany(() => OneChoiceQuestion, (oneChoiceQuestion) => oneChoiceQuestion.test)
+    @OneToMany(() => OneChoiceQuestion, (oneChoiceQuestion) => oneChoiceQuestion.test, {
+        onDelete: "CASCADE"
+    })
     oneChoiceQuestions: OneChoiceQuestion[]
     
-    @OneToMany(() => MultipleChoiceQuestion, (multipleChoiceQuestion) => multipleChoiceQuestion.test)
+    @OneToMany(() => MultipleChoiceQuestion, (multipleChoiceQuestion) => multipleChoiceQuestion.test, {
+        onDelete: "CASCADE"
+    })
     multipleChoiceQuestions: MultipleChoiceQuestion[]
 }

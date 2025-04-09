@@ -82,6 +82,7 @@ export class GetTestCommandHandler {
             COUNT(*)
             FROM test t
             ${name ? `WHERE t.name ILIKE '%${name}%'` : ''}
+            GROUP BY t.${sortBy}
             ORDER BY t.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
         `;
 
