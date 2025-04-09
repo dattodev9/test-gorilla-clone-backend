@@ -5,19 +5,17 @@ import { Repository } from 'typeorm';
 
 Inject();
 
-export class GetOneChoiceQuestionByTestIdCommandHandler {
+export class GetOneChoiceQuestionByIdCommandHandler {
   constructor(
     @InjectRepository(OneChoiceQuestion)
     private oneChoiceQuestionRepository: Repository<OneChoiceQuestion>,
   ) {
   }
 
-  public async execute(testId: string) {
+  public async execute(id: string) {
     return await this.oneChoiceQuestionRepository.find({
       where: {
-        test: {
-          id: testId,
-        },
+        id: id
       },
     });
   }
