@@ -4,7 +4,7 @@ import { Test } from "src/entities/test.entity";
 import { GetTestRequestDto } from '../controller/get-test-request.dto';
 import { PaginationResponseDto } from '../../../../common/pagination/pagination-response-dto';
 import { AppDataSource } from "src/shared/app-data-source";
-import { camelToSnakeCase } from "src/shared/camke-to-snake-case";
+import { camelToSnakeCase } from "src/shared/camel-to-snake-case";
 
 export type TestResponse = Test & {
     totalQuestion: string;
@@ -45,6 +45,7 @@ export class GetTestCommandHandler {
         const query = `
             SELECT 
                 t.*,
+                t.created_at as "createdAt",
                 (
                     SELECT COALESCE(SUM(ocq.time), 0)
                     FROM one_choice_question ocq

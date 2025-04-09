@@ -19,6 +19,11 @@ export class GetOneChoiceQuestionByTestIdCommandHandler {
           id: testId,
         },
       },
+      order: {
+        order: {
+          direction: "ASC"
+        }
+      }
     });
   }
 }
