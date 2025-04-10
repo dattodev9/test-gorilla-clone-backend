@@ -4,11 +4,11 @@ import { Choice } from "src/entities/one-choice-question.entity";
 
 export class CreateOneChoiceQuestionRequestDto {
     @IsString()
-    @Length(2, 50)
+    @Length(2, 100)
     name: string;
 
     @IsString()
-    @Length(2, 50)
+    @Length(2, 500)
     content: string;
 
     @IsArray()
@@ -19,7 +19,7 @@ export class CreateOneChoiceQuestionRequestDto {
     key: string;
 
     @IsNumber()
-    @Min(1)
+    @Min(15)
     time: number;
 
     @IsNumber()

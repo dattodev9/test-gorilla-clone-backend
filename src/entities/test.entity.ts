@@ -11,7 +11,7 @@ import { MultipleChoiceQuestion } from './multiple-choice-question.entity';
 export enum TestStatus {
     DRAFT = 'draft',
     ACTIVE = 'active',
-    ARCHIVE = 'archive',
+    ARCHIVED = 'archived',
 }
 
 @Entity()

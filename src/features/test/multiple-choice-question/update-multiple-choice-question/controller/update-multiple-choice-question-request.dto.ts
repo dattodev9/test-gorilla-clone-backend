@@ -3,12 +3,12 @@ import { Choice } from "src/entities/one-choice-question.entity";
 
 export class UpdateMultipleChoiceQuestionRequestDto {
     @IsString()
-    @Length(2, 50)
+    @Length(2, 100)
     @IsOptional()
     name: string;
 
     @IsString()
-    @Length(2, 50)
+    @Length(2, 500)
     @IsOptional()
     content: string;
 
@@ -23,7 +23,7 @@ export class UpdateMultipleChoiceQuestionRequestDto {
 
     @IsOptional()
     @IsNumber()
-    @Min(1)
+    @Min(15)
     time: number;
 
     @IsOptional()

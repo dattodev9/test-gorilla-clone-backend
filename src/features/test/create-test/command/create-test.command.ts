@@ -1,11 +1,7 @@
-import { IsString, Length } from 'class-validator';
+import { TestStatus } from 'src/entities/test.entity';
 
 export class CreateTestCommand {
-    @Length(2, 50)
-    @IsString()
     name: string;
-
-    @Length(2, 100)
-    @IsString()
     description: string;
+    status: TestStatus;
 }

@@ -3,23 +3,23 @@ import { Choice } from "src/entities/one-choice-question.entity";
 
 export class CreateMultipleChoiceQuestionRequestDto {
     @IsString()
-    @Length(2, 50)
+    @Length(2, 100)
     name: string;
 
     @IsString()
-    @Length(2, 50)
+    @Length(2, 500)
     content: string;
 
     @IsArray()
     @ArrayMinSize(1)
     choices: Choice[];
 
-    @IsString()
+    @IsArray()
     @ArrayMinSize(1)
     key: string[];
 
     @IsNumber()
-    @Min(1)
+    @Min(15)
     time: number;
 
     @IsNumber()
