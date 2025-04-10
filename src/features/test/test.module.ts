@@ -59,6 +59,8 @@ import {
 import {
   UpdateMultipleChoiceQuestionController
 } from './multiple-choice-question/update-multiple-choice-question/controller/update-multiple-choice-question.controller';
+import { GetQuestionByIdController } from './get-question-by-test-id/controller/get-question-by-test-id.controller';
+import { GetQuestionByIdCommandHandler } from './get-question-by-test-id/command/get-question-by-id.command-handler';
 
 @Module({
   imports: [
@@ -69,6 +71,7 @@ import {
     CreateTestController,
     GetTestController,
     GetTestByIdController,
+    GetQuestionByIdController,
     UpdateTestController,
     DeleteTestController,
 
@@ -94,6 +97,7 @@ import {
     CreateTestCommandHandler,
     GetTestCommandHandler,
     GetTestByIdCommandHandler,
+    GetQuestionByIdCommandHandler,
     UpdateTestCommandHandler,
     DeleteTestCommandHandler,
 

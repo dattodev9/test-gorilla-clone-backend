@@ -15,6 +15,7 @@ export class UpdateTestCommandHandler{
   ) {};
 
   public async execute(id: string, command: UpdateTestCommand) {
+    console.log(command);
     const existTest = await this.testRepository.findOne({
       where: {
         id: id

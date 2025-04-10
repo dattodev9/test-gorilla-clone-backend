@@ -31,7 +31,7 @@ export class GetTestCommandHandler {
 
         const data = await this.findAllQuestions(skip, take, camelToSnakeCase(sortBy), direction, name);
         const dataLength: number = await this.getCount(camelToSnakeCase(sortBy), direction, name);
-
+        
         return {
             data,
             page,
@@ -77,6 +77,7 @@ export class GetTestCommandHandler {
     }
 
     async getCount(sortBy: string, direction: string, name?: string): Promise<number> {
+        console.log(name);
         const query = `
             SELECT 
             COUNT(*)
@@ -87,6 +88,6 @@ export class GetTestCommandHandler {
         `;
 
         const result: { count: string }[] = await AppDataSource.query(query);
-        return Number(result[0].count);
+        return Number(result.length);
     }
 }

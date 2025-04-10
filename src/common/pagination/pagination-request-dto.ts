@@ -16,7 +16,7 @@ export class PaginationRequestDto {
     @Type(() => Number)
     @IsInt()
     @Min(1)
-    @Max(20)
+    @Max(100)
     @IsOptional()
     size?: number = 10;
 

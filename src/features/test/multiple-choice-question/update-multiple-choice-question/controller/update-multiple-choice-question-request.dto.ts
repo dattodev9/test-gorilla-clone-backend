@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNumber, IsOptional, IsString, Length, Min } from 'class-validator';
 import { Choice } from "src/entities/one-choice-question.entity";
 
 export class UpdateMultipleChoiceQuestionRequestDto {
@@ -13,14 +13,17 @@ export class UpdateMultipleChoiceQuestionRequestDto {
     content: string;
 
     @IsOptional()
+    @ArrayMinSize(1)
     choices: Choice[];
 
     @IsOptional()
     @IsArray()
+    @ArrayMinSize(1)
     key: string[];
 
     @IsOptional()
     @IsNumber()
+    @Min(1)
     time: number;
 
     @IsOptional()

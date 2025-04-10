@@ -7,5 +7,5 @@ export class UpdateTestCommand {
 
   @Length(2, 100)
   @IsOptional()
-  description: string;
+  description?: string;
 }
