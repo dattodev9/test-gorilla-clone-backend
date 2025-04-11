@@ -8,6 +8,7 @@ export enum CandidateStatus {
 }
 
 export type DoneTests = {
+    id: string;
     name: string;
     overall: string;
 }

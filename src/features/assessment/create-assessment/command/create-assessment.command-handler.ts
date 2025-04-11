@@ -29,7 +29,7 @@ export class CreateAssessmentCommandHandler {
         
         if (missingTestIds.length > 0) {
             console.error(`The following test IDs are invalid: ${missingTestIds.join(', ')}`);
-            throw new TestNotFoundError(`The following test IDs are invalid: ${missingTestIds.join(', ')}`);
+            throw new TestNotFoundError();
         }
 
         const assessment = this.assessmentRepository.create({

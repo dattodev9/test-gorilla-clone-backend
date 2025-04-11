@@ -13,7 +13,8 @@ import { TestNotFoundError } from '../error/test-not-found.error';
 @Controller("/test")
 export class UpdateTestController{
   constructor(private handler: UpdateTestCommandHandler) {};
-  @Patch("/:id")
+
+  @Patch(":id")
   public async updateTest(@Param('id') id: string, @Body() command: UpdateTestCommand){
     try {
       return await this.handler.execute(id, command);
