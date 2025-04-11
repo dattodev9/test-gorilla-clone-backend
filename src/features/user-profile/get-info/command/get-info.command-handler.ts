@@ -1,8 +1,8 @@
-import { Inject } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Request } from "express";
-import { User } from "src/entities/user.entity";
-import { Repository } from "typeorm";
+import { Inject } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Request } from 'express';
+import { User } from 'src/entities/user.entity';
+import { Repository } from 'typeorm';
 
 Inject();
 
@@ -13,7 +13,7 @@ export class GetInfoCommandHandler {
   ) {}
 
   public async execute(req: Request) {
-    const username = req.get("username");
+    const username = req.get('username');
 
     const userInfo = await this.userRepository.findOne({
       select: {
@@ -28,7 +28,7 @@ export class GetInfoCommandHandler {
     });
 
     if (!userInfo) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     return userInfo;

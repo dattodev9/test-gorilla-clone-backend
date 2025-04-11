@@ -8,18 +8,18 @@ import { removeUndefinedAttribute } from '../../../../common/remove-undefined-at
 
 Inject();
 
-export class UpdateTestCommandHandler{
+export class UpdateTestCommandHandler {
   constructor(
     @InjectRepository(Test)
-    private testRepository: Repository<Test>
-  ) {};
+    private testRepository: Repository<Test>,
+  ) {}
 
   public async execute(id: string, command: UpdateTestCommand) {
     console.log(command);
     const existTest = await this.testRepository.findOne({
       where: {
-        id: id
-      }
+        id: id,
+      },
     });
 
     if (!existTest) {
@@ -28,8 +28,11 @@ export class UpdateTestCommandHandler{
 
     const updateData: Partial<Test> = removeUndefinedAttribute<Test>(command);
 
-    await this.testRepository.update({
-      id: id,
-    }, updateData);
+    await this.testRepository.update(
+      {
+        id: id,
+      },
+      updateData,
+    );
   }
 }

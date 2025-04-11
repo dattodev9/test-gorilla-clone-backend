@@ -10,10 +10,7 @@ import { OneChoiceQuestionNotFound } from '../error/one-choice-question-not-foun
 
 @Controller('/one-choice-question')
 export class DeleteOneChoiceQuestionController {
-  constructor(
-    private handler: DeleteOneChoiceQuestionCommandHandler,
-  ) {
-  }
+  constructor(private handler: DeleteOneChoiceQuestionCommandHandler) {}
 
   @Delete(':id')
   public async updateQuestion(@Param('id') id: string) {
@@ -23,7 +20,9 @@ export class DeleteOneChoiceQuestionController {
       console.error(error);
 
       if (error instanceof OneChoiceQuestionNotFound) {
-        throw new NotFoundException(`One choice question with id ${id} not found`);
+        throw new NotFoundException(
+          `One choice question with id ${id} not found`,
+        );
       }
 
       throw new InternalServerErrorException('Something went wrong');

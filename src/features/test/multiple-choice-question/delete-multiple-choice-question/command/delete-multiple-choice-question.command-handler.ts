@@ -10,15 +10,15 @@ export class DeleteMultipleChoiceQuestionCommandHandler {
   constructor(
     @InjectRepository(MultipleChoiceQuestion)
     private multipleChoiceQuestionRepository: Repository<MultipleChoiceQuestion>,
-  ) {
-  }
+  ) {}
 
   public async execute(id: string) {
-    const existMultipleChoiceQuestion = await this.multipleChoiceQuestionRepository.findOne({
-      where: {
-        id: id,
-      },
-    });
+    const existMultipleChoiceQuestion =
+      await this.multipleChoiceQuestionRepository.findOne({
+        where: {
+          id: id,
+        },
+      });
 
     if (!existMultipleChoiceQuestion) {
       throw new MultipleChoiceQuestionNotFound();

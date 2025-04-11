@@ -12,6 +12,10 @@ import { ChangePasswordCommandHandler } from './change-password/command/change-p
 @Module({
   imports: [TypeOrmModule.forFeature([User]), JwtModule],
   controllers: [SignInController, SignUpController, ChangePasswordController],
-  providers: [SignInCommandHandler, SignUpCommandHandler, ChangePasswordCommandHandler],
+  providers: [
+    SignInCommandHandler,
+    SignUpCommandHandler,
+    ChangePasswordCommandHandler,
+  ],
 })
 export class AuthenticationModule {}

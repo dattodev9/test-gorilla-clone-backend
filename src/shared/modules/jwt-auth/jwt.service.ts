@@ -7,7 +7,7 @@ export class JwtService {
   constructor(
     private readonly jwtService: NestJwtService,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   async generateToken(payload: any, expiresIn: string): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

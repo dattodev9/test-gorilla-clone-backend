@@ -1,1 +1,1 @@
-export class AssessmentNotFoundError extends Error { }
+export class AssessmentNotFoundError extends Error {}

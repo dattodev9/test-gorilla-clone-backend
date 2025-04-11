@@ -1,17 +1,17 @@
-import { Choice } from "src/entities/one-choice-question.entity";
+import { Choice } from 'src/entities/one-choice-question.entity';
 
 export class UpdateOneChoiceQuestionCommand {
-    name: string;
+  name: string;
 
-    content: string;
+  content: string;
 
-    choices: Choice[];
+  choices: Choice[];
 
-    key: string;
-    
-    time: number;
+  key: string;
 
-    order: number;
+  time: number;
 
-    testId: string;
+  order: number;
+
+  testId: string;
 }

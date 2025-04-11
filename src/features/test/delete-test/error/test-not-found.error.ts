@@ -1,2 +1,1 @@
-export class TestNotFoundError extends Error {
-}
+export class TestNotFoundError extends Error {}

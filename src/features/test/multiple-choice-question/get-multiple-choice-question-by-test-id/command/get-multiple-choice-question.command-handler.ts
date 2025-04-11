@@ -9,8 +9,7 @@ export class GetMultipleChoiceQuestionByTestIdCommandHandler {
   constructor(
     @InjectRepository(MultipleChoiceQuestion)
     private multipleChoiceQuestionRepository: Repository<MultipleChoiceQuestion>,
-  ) {
-  }
+  ) {}
 
   public async execute(testId: string) {
     return await this.multipleChoiceQuestionRepository.find({
@@ -21,9 +20,9 @@ export class GetMultipleChoiceQuestionByTestIdCommandHandler {
       },
       order: {
         order: {
-          direction: "ASC"
-        }
-      }
+          direction: 'ASC',
+        },
+      },
     });
   }
 }

@@ -1,61 +1,80 @@
-import { InjectRepository } from "@nestjs/typeorm";
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Test, TestStatus } from "src/entities/test.entity";
+import { Test, TestStatus } from 'src/entities/test.entity';
 import { GetTestRequestDto } from '../controller/get-test-request.dto';
 import { PaginationResponseDto } from '../../../../common/pagination/pagination-response-dto';
-import { AppDataSource } from "src/shared/app-data-source";
-import { camelToSnakeCase } from "src/shared/camel-to-snake-case";
+import { AppDataSource } from 'src/shared/app-data-source';
+import { camelToSnakeCase } from 'src/shared/camel-to-snake-case';
 
 export type TestResponse = Test & {
-    totalQuestion: string;
-    totalTime: string;
-}
+  totalQuestion: string;
+  totalTime: string;
+};
 
 export class GetTestCommandHandler {
-    constructor(
-        @InjectRepository(Test)
-        private testRepository: Repository<Test>,
-    ) { }
+  constructor(
+    @InjectRepository(Test)
+    private testRepository: Repository<Test>,
+  ) {}
 
-    public async execute(getTestRequestDto: GetTestRequestDto): Promise<PaginationResponseDto<Test>> {
-        const {
-            page = 1,
-            size = 10,
-            sortBy = 'createdAt',
-            direction = 'desc',
-            name,
-            status
-        } = getTestRequestDto;
+  public async execute(
+    getTestRequestDto: GetTestRequestDto,
+  ): Promise<PaginationResponseDto<Test>> {
+    const {
+      page = 1,
+      size = 10,
+      sortBy = 'createdAt',
+      direction = 'desc',
+      name,
+      status,
+    } = getTestRequestDto;
 
-        const skip = (page - 1) * size;
-        const take = size;
+    const skip = (page - 1) * size;
+    const take = size;
 
-        const data = await this.findAllQuestions(skip, take, camelToSnakeCase(sortBy), direction, name, status);
-        const dataLength: number = await this.getCount(name, status);
+    const data = await this.findAllQuestions(
+      skip,
+      take,
+      camelToSnakeCase(sortBy),
+      direction,
+      name,
+      status,
+    );
+    const dataLength: number = await this.getCount(name, status);
 
-        return {
-            data,
-            page,
-            size,
-            total: dataLength,
-            totalPages: Math.ceil(dataLength / size),
-        };
+    return {
+      data,
+      page,
+      size,
+      total: dataLength,
+      totalPages: Math.ceil(dataLength / size),
+    };
+  }
+
+  async findAllQuestions(
+    skip: number,
+    take: number,
+    sortBy: string,
+    direction: string,
+    name?: string,
+    status?: TestStatus[],
+  ) {
+    const conditions: string[] = [];
+
+    if (name) {
+      conditions.push(`t.name ILIKE '%${name}%'`);
     }
 
-    async findAllQuestions(skip: number, take: number, sortBy: string, direction: string, name?: string, status?: TestStatus[]) {
-        const conditions: string[] = [];
+    if (Array.isArray(status) && status.length > 0) {
+      conditions.push(
+        `t.status IN (${status.map((s) => `'${s}'`).join(', ')})`,
+      );
+    }
 
-        if (name) {
-            conditions.push(`t.name ILIKE '%${name}%'`);
-        }
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-        if (Array.isArray(status) && status.length > 0) {
-            conditions.push(`t.status IN (${status.map((s) => `'${s}'`).join(', ')})`);
-        }
-
-        const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
-        const query = `
+    const query = `
             SELECT 
                 t.*,
                 t.created_at as "createdAt",
@@ -84,30 +103,33 @@ export class GetTestCommandHandler {
             ORDER BY t.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
             LIMIT ${take} OFFSET ${skip}
         `;
-        const result: TestResponse[] = await AppDataSource.query(query);
-        return result;
+    const result: TestResponse[] = await AppDataSource.query(query);
+    return result;
+  }
+
+  async getCount(name?: string, status?: TestStatus[]): Promise<number> {
+    const conditions: string[] = [];
+
+    if (name) {
+      conditions.push(`t.name ILIKE '%${name}%'`);
     }
 
-    async getCount(name?: string, status?: TestStatus[]): Promise<number> {
-        const conditions: string[] = [];
+    if (Array.isArray(status) && status.length > 0) {
+      conditions.push(
+        `t.status IN (${status.map((s) => `'${s}'`).join(', ')})`,
+      );
+    }
 
-        if (name) {
-            conditions.push(`t.name ILIKE '%${name}%'`);
-        }
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-        if (Array.isArray(status) && status.length > 0) {
-            conditions.push(`t.status IN (${status.map((s) => `'${s}'`).join(', ')})`);
-        }
-
-        const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
-        const query = `
+    const query = `
             SELECT 
             COUNT(*)
             FROM test t
             ${whereClause}
         `;
-        const result: { count: string }[] = await AppDataSource.query(query);
-        return Number(result[0].count);
-    }
+    const result: { count: string }[] = await AppDataSource.query(query);
+    return Number(result[0].count);
+  }
 }

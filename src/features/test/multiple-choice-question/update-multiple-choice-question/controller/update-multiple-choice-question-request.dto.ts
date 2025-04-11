@@ -1,36 +1,44 @@
-import { ArrayMinSize, IsArray, IsNumber, IsOptional, IsString, Length, Min } from 'class-validator';
-import { Choice } from "src/entities/one-choice-question.entity";
+import {
+  ArrayMinSize,
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+  Min,
+} from 'class-validator';
+import { Choice } from 'src/entities/one-choice-question.entity';
 
 export class UpdateMultipleChoiceQuestionRequestDto {
-    @IsString()
-    @Length(2, 100)
-    @IsOptional()
-    name: string;
+  @IsString()
+  @Length(2, 100)
+  @IsOptional()
+  name: string;
 
-    @IsString()
-    @Length(2, 500)
-    @IsOptional()
-    content: string;
+  @IsString()
+  @Length(2, 500)
+  @IsOptional()
+  content: string;
 
-    @IsOptional()
-    @ArrayMinSize(1)
-    choices: Choice[];
+  @IsOptional()
+  @ArrayMinSize(1)
+  choices: Choice[];
 
-    @IsOptional()
-    @IsArray()
-    @ArrayMinSize(1)
-    key: string[];
+  @IsOptional()
+  @IsArray()
+  @ArrayMinSize(1)
+  key: string[];
 
-    @IsOptional()
-    @IsNumber()
-    @Min(15)
-    time: number;
+  @IsOptional()
+  @IsNumber()
+  @Min(15)
+  time: number;
 
-    @IsOptional()
-    @IsNumber()
-    order: number;
+  @IsOptional()
+  @IsNumber()
+  order: number;
 
-    @IsOptional()
-    @IsString()
-    testId: string;
+  @IsOptional()
+  @IsString()
+  testId: string;
 }

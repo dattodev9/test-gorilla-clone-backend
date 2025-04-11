@@ -9,20 +9,22 @@ import { AppDataSource } from 'src/shared/app-data-source';
 Inject();
 
 export class GetTestByIdCommandHandler {
-  constructor(@InjectRepository(Test) private testRepository: Repository<Test>) {}
+  constructor(
+    @InjectRepository(Test) private testRepository: Repository<Test>,
+  ) {}
 
-  public async execute(id: string){
+  public async execute(id: string) {
     const existTest = await this.findTestById(id);
 
-    if (!existTest){
+    if (!existTest) {
       throw new TestNotFoundError();
     }
 
     return existTest;
   }
 
-      async findTestById(id: string) {
-          const query = `
+  async findTestById(id: string) {
+    const query = `
               SELECT 
                   t.*,
                   (
@@ -48,8 +50,8 @@ export class GetTestByIdCommandHandler {
               FROM test t
               WHERE t.id = '${id}'
           `;
-      
-          const result: TestResponse[] = await AppDataSource.query(query);
-          return result[0];
-      }
+
+    const result: TestResponse[] = await AppDataSource.query(query);
+    return result[0];
+  }
 }

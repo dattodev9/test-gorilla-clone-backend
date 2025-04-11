@@ -1,26 +1,34 @@
-import { Body, Controller, InternalServerErrorException, NotFoundException, Param, Patch } from "@nestjs/common";
-import { UpdateAssessmentCommandHandler } from "../command/update-assessment.command-handler";
-import { UpdateAssessmentRequestDto } from "./update-assessment-request.dto";
-import { AssessmentNotFoundError } from "../error/assessment-not-found.error";
+import {
+  Body,
+  Controller,
+  InternalServerErrorException,
+  NotFoundException,
+  Param,
+  Patch,
+} from '@nestjs/common';
+import { UpdateAssessmentCommandHandler } from '../command/update-assessment.command-handler';
+import { UpdateAssessmentRequestDto } from './update-assessment-request.dto';
+import { AssessmentNotFoundError } from '../error/assessment-not-found.error';
 
-@Controller("/assessment")
+@Controller('/assessment')
 export class UpdateAssessmentController {
-    constructor(
-        private handler: UpdateAssessmentCommandHandler
-    ) { }
+  constructor(private handler: UpdateAssessmentCommandHandler) {}
 
-    @Patch(":id")
-    public async updateAssessment(@Param("id") id: string, @Body() request: UpdateAssessmentRequestDto) {
-        try {
-            return await this.handler.execute(id, request);
-        } catch (error) {
-            console.error(error);
+  @Patch(':id')
+  public async updateAssessment(
+    @Param('id') id: string,
+    @Body() request: UpdateAssessmentRequestDto,
+  ) {
+    try {
+      return await this.handler.execute(id, request);
+    } catch (error) {
+      console.error(error);
 
-            if (error instanceof AssessmentNotFoundError) {
-                throw new NotFoundException("Assessment not found");
-            }
+      if (error instanceof AssessmentNotFoundError) {
+        throw new NotFoundException('Assessment not found');
+      }
 
-            throw new InternalServerErrorException("Something went wrong");
-        }
+      throw new InternalServerErrorException('Something went wrong');
     }
+  }
 }

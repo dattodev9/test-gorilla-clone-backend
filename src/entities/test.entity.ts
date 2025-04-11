@@ -1,52 +1,60 @@
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    OneToMany,
-    ManyToMany,
-    JoinTable,
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { OneChoiceQuestion } from './one-choice-question.entity';
 import { MultipleChoiceQuestion } from './multiple-choice-question.entity';
 import { Assessment } from './assessment.entity';
 
 export enum TestStatus {
-    DRAFT = 'draft',
-    ACTIVE = 'active',
-    ARCHIVED = 'archived',
+  DRAFT = 'draft',
+  ACTIVE = 'active',
+  ARCHIVED = 'archived',
 }
 
 @Entity()
 export class Test {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    description: string;
+  @Column()
+  description: string;
 
-    @Column({
-        default: TestStatus.DRAFT
-    })
-    status: TestStatus;
+  @Column({
+    default: TestStatus.DRAFT,
+  })
+  status: TestStatus;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @OneToMany(() => OneChoiceQuestion, (oneChoiceQuestion) => oneChoiceQuestion.test, {
-        onDelete: "CASCADE"
-    })
-    oneChoiceQuestions: OneChoiceQuestion[]
+  @OneToMany(
+    () => OneChoiceQuestion,
+    (oneChoiceQuestion) => oneChoiceQuestion.test,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  oneChoiceQuestions: OneChoiceQuestion[];
 
-    @OneToMany(() => MultipleChoiceQuestion, (multipleChoiceQuestion) => multipleChoiceQuestion.test, {
-        onDelete: "CASCADE"
-    })
-    multipleChoiceQuestions: MultipleChoiceQuestion[]
+  @OneToMany(
+    () => MultipleChoiceQuestion,
+    (multipleChoiceQuestion) => multipleChoiceQuestion.test,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  multipleChoiceQuestions: MultipleChoiceQuestion[];
 
-    @ManyToMany(() => Assessment)
-    @JoinTable()
-    assessments: Assessment[];
+  @ManyToMany(() => Assessment)
+  @JoinTable()
+  assessments: Assessment[];
 }

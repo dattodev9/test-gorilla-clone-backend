@@ -1,39 +1,39 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Test } from "./test.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Test } from './test.entity';
 
 export type Choice = {
-    key: string;
-    value: string;
-}
+  key: string;
+  value: string;
+};
 
 @Entity()
 export class OneChoiceQuestion {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    name: string;
-    
-    @Column()
-    content: string;
-    
-    @Column({
-        type: 'jsonb',
-        array: false,
-        default: () => "'[]'",
-        nullable: false,
-    })
-    public choices: Array<Choice>;
+  @Column()
+  name: string;
 
-    @Column()
-    key: string;
+  @Column()
+  content: string;
 
-    @Column()
-    time: number;
+  @Column({
+    type: 'jsonb',
+    array: false,
+    default: () => "'[]'",
+    nullable: false,
+  })
+  public choices: Array<Choice>;
 
-    @Column()
-    order: number;
+  @Column()
+  key: string;
 
-    @ManyToOne(() => Test, (test) => test.oneChoiceQuestions)
-    test: Test;
+  @Column()
+  time: number;
+
+  @Column()
+  order: number;
+
+  @ManyToOne(() => Test, (test) => test.oneChoiceQuestions)
+  test: Test;
 }

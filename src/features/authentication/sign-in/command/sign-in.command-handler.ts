@@ -18,8 +18,8 @@ export class SignInCommandHandler {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
-  ) { }
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   public async execute(res: Response, command: SignInCommand) {
     const userInfo = await this.userRepository.findOne({
@@ -59,7 +59,10 @@ export class SignInCommandHandler {
       '7d',
     );
 
-    await this.cacheManager.set(`refreshToken-${userInfo.username}`, refreshToken);
+    await this.cacheManager.set(
+      `refreshToken-${userInfo.username}`,
+      refreshToken,
+    );
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
@@ -74,7 +77,7 @@ export class SignInCommandHandler {
     });
 
     return res.status(200).json({
-      message: "Sign in successful"
+      message: 'Sign in successful',
     });
   }
 

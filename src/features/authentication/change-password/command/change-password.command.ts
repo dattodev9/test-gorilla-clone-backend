@@ -1,4 +1,4 @@
 export class ChangePasswordCommand {
-    username: string;
-    newPassword: string;
+  username: string;
+  newPassword: string;
 }

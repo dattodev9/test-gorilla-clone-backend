@@ -12,24 +12,28 @@ export class UpdateOneChoiceQuestionCommandHandler {
   constructor(
     @InjectRepository(OneChoiceQuestion)
     private oneChoiceQuestionRepository: Repository<OneChoiceQuestion>,
-  ) {
-  }
+  ) {}
 
   public async execute(id: string, command: UpdateOneChoiceQuestionCommand) {
-    const existOneChoiceQuestion = await this.oneChoiceQuestionRepository.findOne({
-      where: {
-        id: id,
-      },
-    });
+    const existOneChoiceQuestion =
+      await this.oneChoiceQuestionRepository.findOne({
+        where: {
+          id: id,
+        },
+      });
 
     if (!existOneChoiceQuestion) {
       throw new OneChoiceQuestionNotFound();
     }
 
-    const updateData: Partial<OneChoiceQuestion> = removeUndefinedAttribute(command);
+    const updateData: Partial<OneChoiceQuestion> =
+      removeUndefinedAttribute(command);
 
-    return await this.oneChoiceQuestionRepository.update({
-      id: id,
-    }, updateData);
+    return await this.oneChoiceQuestionRepository.update(
+      {
+        id: id,
+      },
+      updateData,
+    );
   }
 }

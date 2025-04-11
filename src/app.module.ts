@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { PostgresModule } from './shared/modules/postgres.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthenticationModule } from './features/authentication/authentication.module';
@@ -12,13 +17,22 @@ import { TestModule } from './features/test/test.module';
 import { AssessmentModule } from './features/assessment/assessment.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), CacheModule.register({
-    isGlobal: true
-  }), PostgresModule, AuthenticationModule, UserProfileModule, TypeOrmModule.forFeature([User]), JwtModule, TestModule, AssessmentModule],
+  imports: [
+    ConfigModule.forRoot(),
+    CacheModule.register({
+      isGlobal: true,
+    }),
+    PostgresModule,
+    AuthenticationModule,
+    UserProfileModule,
+    TypeOrmModule.forFeature([User]),
+    JwtModule,
+    TestModule,
+    AssessmentModule,
+  ],
   controllers: [],
   providers: [],
 })
-
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer

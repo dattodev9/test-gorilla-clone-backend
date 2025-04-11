@@ -1,23 +1,26 @@
-import { Inject } from "@nestjs/common";
-import { Assessment } from "src/entities/assessment.entity";
-import { AppDataSource } from "src/shared/app-data-source";
+import { Inject } from '@nestjs/common';
+import { Assessment } from 'src/entities/assessment.entity';
+import { AppDataSource } from 'src/shared/app-data-source';
 
-type AssessmentResponse = Pick<Assessment, "name" | "jobRole" | "status" | "candidates"> & {
-    testsCount: string;
-    testsTime: string;
-}
+type AssessmentResponse = Pick<
+  Assessment,
+  'name' | 'jobRole' | 'status' | 'candidates'
+> & {
+  testsCount: string;
+  testsTime: string;
+};
 
 Inject();
 
 export class GetAssessmentByIdCommandHandler {
-    constructor() { }
+  constructor() {}
 
-    public async execute(id: string) {
-        return await this.findById(id);
-    }
+  public async execute(id: string) {
+    return await this.findById(id);
+  }
 
-    private async findById(id: string) {
-        const query = `
+  private async findById(id: string) {
+    const query = `
                 SELECT 
                     a.name,
                     a.job_role AS "jobRole",
@@ -72,8 +75,7 @@ export class GetAssessmentByIdCommandHandler {
                 GROUP BY a.id;
                     `;
 
-        const result: AssessmentResponse[] = await AppDataSource.query(query);
-        return result;
-    }
+    const result: AssessmentResponse[] = await AppDataSource.query(query);
+    return result;
+  }
 }
-

@@ -20,7 +20,9 @@ export class DeleteMultipleChoiceQuestionController {
       console.error(error);
 
       if (error instanceof MultipleChoiceQuestionNotFound) {
-        throw new NotFoundException(`Multiple choice question with id ${id} not found`);
+        throw new NotFoundException(
+          `Multiple choice question with id ${id} not found`,
+        );
       }
 
       throw new InternalServerErrorException('Something went wrong');

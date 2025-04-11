@@ -41,24 +41,12 @@ import { CreateMultipleChoiceQuestionController } from './multiple-choice-questi
 import { DeleteMultipleChoiceQuestionController } from './multiple-choice-question/delete-multiple-choice-question/controller/delete-multiple-choice-question.controller';
 import { GetMultipleChoiceQuestionByIdController } from './multiple-choice-question/get-multiple-choice-question-by-id/controller/get-multiple-choice-question-by-id.controller';
 import { GetMultipleChoiceQuestionByTestIdController } from './multiple-choice-question/get-multiple-choice-question-by-test-id/controller/get-multiple-choice-question-by-test-id.controller';
-import {
-  CreateMultipleChoiceQuestionCommandHandler
-} from './multiple-choice-question/create-multiple-choice-question/command/create-multiple-choice-question.command-handler';
-import {
-  GetMultipleChoiceQuestionByIdCommandHandler
-} from './multiple-choice-question/get-multiple-choice-question-by-id/command/get-multiple-choice-question.command-handler';
-import {
-  GetMultipleChoiceQuestionByTestIdCommandHandler
-} from './multiple-choice-question/get-multiple-choice-question-by-test-id/command/get-multiple-choice-question.command-handler';
-import {
-  UpdateMultipleChoiceQuestionCommandHandler
-} from './multiple-choice-question/update-multiple-choice-question/command/update-multiple-choice-question.command-handler';
-import {
-  DeleteMultipleChoiceQuestionCommandHandler
-} from './multiple-choice-question/delete-multiple-choice-question/command/delete-multiple-choice-question.command-handler';
-import {
-  UpdateMultipleChoiceQuestionController
-} from './multiple-choice-question/update-multiple-choice-question/controller/update-multiple-choice-question.controller';
+import { CreateMultipleChoiceQuestionCommandHandler } from './multiple-choice-question/create-multiple-choice-question/command/create-multiple-choice-question.command-handler';
+import { GetMultipleChoiceQuestionByIdCommandHandler } from './multiple-choice-question/get-multiple-choice-question-by-id/command/get-multiple-choice-question.command-handler';
+import { GetMultipleChoiceQuestionByTestIdCommandHandler } from './multiple-choice-question/get-multiple-choice-question-by-test-id/command/get-multiple-choice-question.command-handler';
+import { UpdateMultipleChoiceQuestionCommandHandler } from './multiple-choice-question/update-multiple-choice-question/command/update-multiple-choice-question.command-handler';
+import { DeleteMultipleChoiceQuestionCommandHandler } from './multiple-choice-question/delete-multiple-choice-question/command/delete-multiple-choice-question.command-handler';
+import { UpdateMultipleChoiceQuestionController } from './multiple-choice-question/update-multiple-choice-question/controller/update-multiple-choice-question.controller';
 import { GetQuestionByIdController } from './get-question-by-test-id/controller/get-question-by-test-id.controller';
 import { GetQuestionByIdCommandHandler } from './get-question-by-test-id/command/get-question-by-id.command-handler';
 
@@ -90,7 +78,7 @@ import { GetQuestionByIdCommandHandler } from './get-question-by-test-id/command
     DeleteMultipleChoiceQuestionController,
     GetMultipleChoiceQuestionByIdController,
     GetMultipleChoiceQuestionByTestIdController,
-    UpdateMultipleChoiceQuestionController
+    UpdateMultipleChoiceQuestionController,
   ],
   providers: [
     // Test Command Handlers
@@ -116,7 +104,7 @@ import { GetQuestionByIdCommandHandler } from './get-question-by-test-id/command
     GetMultipleChoiceQuestionByIdCommandHandler,
     GetMultipleChoiceQuestionByTestIdCommandHandler,
     UpdateMultipleChoiceQuestionCommandHandler,
-    DeleteMultipleChoiceQuestionCommandHandler
+    DeleteMultipleChoiceQuestionCommandHandler,
   ],
 })
 export class TestModule {}

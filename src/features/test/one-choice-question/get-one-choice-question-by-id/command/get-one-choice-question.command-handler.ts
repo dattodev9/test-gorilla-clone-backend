@@ -9,13 +9,12 @@ export class GetOneChoiceQuestionByIdCommandHandler {
   constructor(
     @InjectRepository(OneChoiceQuestion)
     private oneChoiceQuestionRepository: Repository<OneChoiceQuestion>,
-  ) {
-  }
+  ) {}
 
   public async execute(id: string) {
     return await this.oneChoiceQuestionRepository.findOne({
       where: {
-        id: id
+        id: id,
       },
     });
   }
