@@ -27,7 +27,10 @@ export class GetTestCommandHandler {
             status
         } = getTestRequestDto;
 
-        const data = await this.findAllQuestions((page - 1) * size, size, camelToSnakeCase(sortBy), direction, name, status);
+        const skip = (page - 1) * size;
+        const take = size;
+
+        const data = await this.findAllQuestions(skip, take, camelToSnakeCase(sortBy), direction, name, status);
         const dataLength: number = await this.getCount(name, status);
 
         return {
@@ -39,7 +42,7 @@ export class GetTestCommandHandler {
         };
     }
 
-    async findAllQuestions(skip: number, take: number, sortBy: string, direction: string, name?: string, status?: TestStatus[]): Promise<TestResponse[]> {
+    async findAllQuestions(skip: number, take: number, sortBy: string, direction: string, name?: string, status?: TestStatus[]) {
         const conditions: string[] = [];
 
         if (name) {
@@ -81,7 +84,8 @@ export class GetTestCommandHandler {
             ORDER BY t.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
             LIMIT ${take} OFFSET ${skip}
         `;
-        return await AppDataSource.query(query);
+        const result: TestResponse[] = await AppDataSource.query(query);
+        return result;
     }
 
     async getCount(name?: string, status?: TestStatus[]): Promise<number> {

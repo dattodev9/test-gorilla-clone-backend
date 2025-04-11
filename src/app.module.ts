@@ -9,11 +9,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtModule } from './shared/modules/jwt-auth/jwt.module';
 import { TestModule } from './features/test/test.module';
+import { AssessmentModule } from './features/assessment/assessment.module';
 
 @Module({
   imports: [ConfigModule.forRoot(), CacheModule.register({
     isGlobal: true
-  }), PostgresModule, AuthenticationModule, UserProfileModule, TypeOrmModule.forFeature([User]), JwtModule, TestModule],
+  }), PostgresModule, AuthenticationModule, UserProfileModule, TypeOrmModule.forFeature([User]), JwtModule, TestModule, AssessmentModule],
   controllers: [],
   providers: [],
 })

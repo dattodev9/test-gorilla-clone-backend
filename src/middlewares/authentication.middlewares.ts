@@ -29,14 +29,17 @@ export class AuthenticationMiddleware implements NestMiddleware {
                 await this.validateUser(accessTokenPayload.username);
                 res.set('username', accessTokenPayload.username);
                 return next();
-            } else {
-                console.log('Access token expired, attempting to validate refresh token');
-                await this.handleRefreshToken(req, res, next);
             }
         } catch (error) {
-            console.log('Access token expired, attempting to validate refresh token');
+            console.log('Access token validation failed:', error.message);
+        }
+
+        try {
+            console.log('Attempting to validate refresh token');
             await this.handleRefreshToken(req, res, next);
-            return;
+        } catch (error) {
+            console.error('Refresh token validation failed:', error.message);
+            throw new ForbiddenException('Authentication failed');
         }
     }
 
@@ -66,7 +69,6 @@ export class AuthenticationMiddleware implements NestMiddleware {
             httpOnly: true,
             sameSite: 'strict',
             path: '/',
-            maxAge: 15 * 60 * 1000,
         });
 
         res.set('username', username);

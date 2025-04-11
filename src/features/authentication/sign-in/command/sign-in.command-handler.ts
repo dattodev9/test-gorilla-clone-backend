@@ -65,14 +65,12 @@ export class SignInCommandHandler {
       httpOnly: true,
       sameSite: 'strict',
       path: '/',
-      maxAge: 15 * 60 * 1000,
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       sameSite: 'strict',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
