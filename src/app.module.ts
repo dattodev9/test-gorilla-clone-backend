@@ -15,6 +15,7 @@ import { User } from './entities/user.entity';
 import { JwtModule } from './shared/modules/jwt-auth/jwt.module';
 import { TestModule } from './features/test/test.module';
 import { AssessmentModule } from './features/assessment/assessment.module';
+import { CandidateModule } from './features/candidate/candidate.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AssessmentModule } from './features/assessment/assessment.module';
     JwtModule,
     TestModule,
     AssessmentModule,
+    CandidateModule,
   ],
   controllers: [],
   providers: [],

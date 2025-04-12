@@ -30,11 +30,10 @@ export class Candidate {
   @Column()
   email: string;
 
-  @Column()
-  jobRole: string;
-
-  @Column()
-  testLink: string;
+  @Column({
+    nullable: true,
+  })
+  testLink?: string;
 
   @Column({
     type: 'jsonb',
@@ -42,15 +41,17 @@ export class Candidate {
     default: () => "'[]'",
     nullable: false,
   })
-  public doneTests: Array<DoneTests>;
+  public doneTests?: Array<DoneTests>;
 
   @Column({
     default: CandidateStatus.DRAFT,
   })
   status: CandidateStatus;
 
-  @Column()
-  takeDate: Date;
+  @Column({
+    nullable: true,
+  })
+  takeDate?: Date;
 
   @CreateDateColumn()
   createdAt: Date;
