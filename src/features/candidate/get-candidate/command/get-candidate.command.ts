@@ -4,6 +4,6 @@ import { CandidateStatus } from '../../../../entities/candidate.entity';
 export class GetCandidateCommand extends PaginationRequestDto {
   name?: string;
   email?: string;
-  status?: CandidateStatus;
+  status?: CandidateStatus[];
   assessmentId?: string;
 }

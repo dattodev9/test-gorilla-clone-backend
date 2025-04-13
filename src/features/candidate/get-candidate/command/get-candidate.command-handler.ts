@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Candidate } from '../../../../entities/candidate.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { GetCandidateCommand } from './get-candidate.command';
 import { removeUndefinedAttribute } from '../../../../common/remove-undefined-attribute';
 
@@ -20,7 +20,9 @@ export class GetCandidateCommandHandler {
       where: {
         name: processedCommand?.name,
         email: processedCommand?.email,
-        status: processedCommand?.status,
+        status: processedCommand?.status
+          ? In(processedCommand.status)
+          : undefined,
         assessment: {
           id: processedCommand?.assessmentId,
         },

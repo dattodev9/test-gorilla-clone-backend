@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Test, TestStatus } from 'src/entities/test.entity';
-import { GetTestRequestDto } from '../controller/get-test-request.dto';
 import { PaginationResponseDto } from '../../../../common/pagination/pagination-response-dto';
 import { AppDataSource } from 'src/shared/app-data-source';
 import { camelToSnakeCase } from 'src/shared/camel-to-snake-case';
+import { GetTestCommand } from './get-test.command';
 
 export type TestResponse = Test & {
   totalQuestion: string;
@@ -18,7 +18,7 @@ export class GetTestCommandHandler {
   ) {}
 
   public async execute(
-    getTestRequestDto: GetTestRequestDto,
+    command: GetTestCommand,
   ): Promise<PaginationResponseDto<Test>> {
     const {
       page = 1,
@@ -27,7 +27,7 @@ export class GetTestCommandHandler {
       direction = 'desc',
       name,
       status,
-    } = getTestRequestDto;
+    } = command;
 
     const skip = (page - 1) * size;
     const take = size;

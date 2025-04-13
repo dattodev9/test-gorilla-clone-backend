@@ -1,15 +1,7 @@
-import {
-  ArrayMinSize,
-  IsArray,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Length,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
 import { PaginationRequestDto } from 'src/common/pagination/pagination-request-dto';
 import { AssessmentStatus } from 'src/entities/assessment.entity';
+import { Transform } from 'class-transformer';
 
 export class GetAssessmentRequestDto extends PaginationRequestDto {
   @IsString()
@@ -17,8 +9,9 @@ export class GetAssessmentRequestDto extends PaginationRequestDto {
   @Length(2, 100)
   name?: string;
 
-  @IsArray()
+  @IsEnum(AssessmentStatus, { each: true })
   @IsOptional()
-  @ArrayMinSize(1)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   status?: AssessmentStatus[];
 }

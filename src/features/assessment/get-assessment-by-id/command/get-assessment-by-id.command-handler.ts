@@ -4,7 +4,7 @@ import { AppDataSource } from 'src/shared/app-data-source';
 
 type AssessmentResponse = Pick<
   Assessment,
-  'name' | 'jobRole' | 'status' | 'candidates'
+  'name' | 'jobRole' | 'status' | 'candidates' | 'tests'
 > & {
   testsCount: string;
   testsTime: string;

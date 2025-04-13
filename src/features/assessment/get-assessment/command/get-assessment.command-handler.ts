@@ -55,12 +55,12 @@ export class GetAssessmentCommandHandler {
     const conditions: string[] = [];
 
     if (name) {
-      conditions.push(`t.name ILIKE '%${name}%'`);
+      conditions.push(`a.name ILIKE '%${name}%'`);
     }
 
     if (Array.isArray(status) && status.length > 0) {
       conditions.push(
-        `t.status IN (${status.map((s) => `'${s}'`).join(', ')})`,
+        `a.status IN (${status.map((s) => `'${s}'`).join(', ')})`,
       );
     }
 
@@ -79,9 +79,9 @@ export class GetAssessmentCommandHandler {
                     assessment a
                 LEFT JOIN 
                     candidate c ON c.assessment_id = a.id
+                ${whereClause}
                 GROUP BY 
                     a.id, a.name
-                ${whereClause}
                 ORDER BY a.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
                 LIMIT ${take} OFFSET ${skip}
             `;
