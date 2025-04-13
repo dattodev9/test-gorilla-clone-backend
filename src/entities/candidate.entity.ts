@@ -31,11 +31,6 @@ export class Candidate {
   email: string;
 
   @Column({
-    nullable: true,
-  })
-  testLink?: string;
-
-  @Column({
     type: 'jsonb',
     array: false,
     default: () => "'[]'",

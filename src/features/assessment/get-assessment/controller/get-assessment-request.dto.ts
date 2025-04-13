@@ -1,9 +1,12 @@
 import {
   ArrayMinSize,
   IsArray,
+  IsNumber,
   IsOptional,
   IsString,
   Length,
+  Max,
+  Min,
 } from 'class-validator';
 import { PaginationRequestDto } from 'src/common/pagination/pagination-request-dto';
 import { AssessmentStatus } from 'src/entities/assessment.entity';

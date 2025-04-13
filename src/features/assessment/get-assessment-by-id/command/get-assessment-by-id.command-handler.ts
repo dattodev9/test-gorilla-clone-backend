@@ -55,22 +55,10 @@ export class GetAssessmentByIdCommandHandler {
                                 )
                             )
                         ) FILTER (WHERE t.id IS NOT NULL), '[]'
-                    ) AS "tests",
-                    COALESCE(
-                        JSON_AGG(
-                            JSON_BUILD_OBJECT(
-                                'id', c.id,
-                                'name', c.name,
-                                'overall', c.done_tests,
-                                'status', c.status,
-                                'takeDate', c.take_date
-                            )
-                        ) FILTER (WHERE c.id IS NOT NULL), '[]'
-                    ) AS "candidates"
+                    ) AS "tests"
                 FROM assessment a
                 LEFT JOIN assessment_tests_test at ON a.id = at.assessment_id
                 LEFT JOIN test t ON at.test_id = t.id
-                LEFT JOIN candidate c ON c.assessment_id = a.id
                 WHERE a.id = '${id}'
                 GROUP BY a.id;
                     `;

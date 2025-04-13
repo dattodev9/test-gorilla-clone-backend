@@ -31,6 +31,7 @@ export class CreateCandidateCommandHandler {
       throw new AssessmentNotFoundError();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { assessmentId } = command;
 
     return await this.candidateRepository.save({

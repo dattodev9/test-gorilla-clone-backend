@@ -1,11 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAssessmentCommand } from './update-assessment.command';
 import { Inject } from '@nestjs/common';
-import { Assessment } from 'src/entities/assessment.entity';
+import { Assessment, AssessmentStatus } from 'src/entities/assessment.entity';
 import { In, Repository } from 'typeorm';
 import { AssessmentNotFoundError } from '../error/assessment-not-found.error';
 import { Test, TestStatus } from 'src/entities/test.entity';
 import { TestNotFoundError } from '../../create-assessment/error/test-not-found.error';
+import { AssessmentStatusNotValidError } from '../error/assessment-status-not-valid.error';
 
 Inject();
 
@@ -18,7 +19,6 @@ export class UpdateAssessmentCommandHandler {
   ) {}
 
   public async execute(id: string, command: UpdateAssessmentCommand) {
-    console.log(command);
     const existAssessment = await this.assessmentRepository.findOne({
       where: {
         id: id,
@@ -27,6 +27,10 @@ export class UpdateAssessmentCommandHandler {
 
     if (!existAssessment) {
       throw new AssessmentNotFoundError();
+    }
+
+    if (existAssessment.status === AssessmentStatus.ACTIVE) {
+      throw new AssessmentStatusNotValidError();
     }
 
     if (command.name) {
