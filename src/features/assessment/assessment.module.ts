@@ -13,6 +13,8 @@ import { UpdateAssessmentController } from './update-assessment/controller/updat
 import { UpdateAssessmentCommandHandler } from './update-assessment/command/update-assessment.command-handler';
 import { GetCandidateByAssessmentIdController } from './get-candidate-by-assessment-id/controller/get-candidate-by-assessment-id.controller';
 import { GetCandidateByAssessmentIdCommandHandler } from './get-candidate-by-assessment-id/command/get-candidate-by-assessment-id.command-handler';
+import { GetAssessmentViewByIdController } from './get-assessment-view-by-id/controller/get-assessment-view-by-id.controller';
+import { GetAssessmentViewByIdCommandHandler } from './get-assessment-view-by-id/command/get-assessment-view-by-id.command-handler';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Assessment, Test, Candidate])],
@@ -21,6 +23,7 @@ import { GetCandidateByAssessmentIdCommandHandler } from './get-candidate-by-ass
     GetAssessmentController,
     GetAssessmentByIdController,
     GetCandidateByAssessmentIdController,
+    GetAssessmentViewByIdController,
     UpdateAssessmentController,
   ],
   providers: [
@@ -28,6 +31,7 @@ import { GetCandidateByAssessmentIdCommandHandler } from './get-candidate-by-ass
     GetAssessmentCommandHandler,
     GetAssessmentByIdCommandHandler,
     GetCandidateByAssessmentIdCommandHandler,
+    GetAssessmentViewByIdCommandHandler,
     UpdateAssessmentCommandHandler,
   ],
 })

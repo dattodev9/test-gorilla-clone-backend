@@ -1,6 +1,9 @@
 import { Inject } from '@nestjs/common';
 import { AppDataSource } from '../../../../shared/app-data-source';
-import { Candidate, CandidateStatus } from '../../../../entities/candidate.entity';
+import {
+  Candidate,
+  CandidateStatus,
+} from '../../../../entities/candidate.entity';
 import { Assessment } from '../../../../entities/assessment.entity';
 import { Test } from '../../../../entities/test.entity';
 
@@ -63,6 +66,7 @@ export class GetAssessmentOverviewByIdCommandHandler {
         GROUP BY c.id, a.job_role
     `;
 
-    return await AppDataSource.query(query);
+    const result: AssessmentOverviewById[] = await AppDataSource.query(query);
+    return result[0];
   }
 }

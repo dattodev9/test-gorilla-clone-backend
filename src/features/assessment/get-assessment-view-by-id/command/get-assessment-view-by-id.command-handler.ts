@@ -1,7 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { AppDataSource } from '../../../../shared/app-data-source';
 import { OneChoiceQuestion } from '../../../../entities/one-choice-question.entity';
-import { CandidateStatus } from '../../../../entities/candidate.entity';
 import { Test } from '../../../../entities/test.entity';
 
 export type QuestionList = Pick<
@@ -17,20 +16,22 @@ export type TestList = Pick<Test, 'id' | 'name'> & {
   questionList: QuestionList[];
 };
 
-export type AssessmentById = {
+export type AssessmentViewById = {
   testList: TestList[];
 };
 
 Inject();
 
-export class GetAssessmentByIdCommandHandler {
+export class GetAssessmentViewByIdCommandHandler {
   constructor() {}
 
   public async execute(id: string) {
-    return await this.getAssessmentById(id);
+    return await this.getAssessmentViewById(id);
   }
 
-  private async getAssessmentById(id: string): Promise<AssessmentById[]> {
+  private async getAssessmentViewById(
+    id: string,
+  ): Promise<AssessmentViewById[]> {
     const query = `
         SELECT t.id        AS "id",
                t.name      AS "name",
@@ -71,8 +72,7 @@ export class GetAssessmentByIdCommandHandler {
                  LEFT JOIN assessment_tests_test att ON t.id = att.test_id
                  LEFT JOIN assessment a ON att.assessment_id = a.id
                  LEFT JOIN candidate c ON a.id = c.assessment_id
-        WHERE c.id = '${id}'
-          AND c.status IN ('${CandidateStatus.DRAFT}')
+        WHERE a.id = '${id}'
         GROUP BY t.id
     `;
     return await AppDataSource.query(query);
