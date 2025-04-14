@@ -34,12 +34,6 @@ export class GetLatestOrderQuestionCommandHandler {
         order: string;
       }>();
 
-    console.log(
-      Math.max(
-        Number(latestOrderOneChoiceQuestion?.order ?? 0),
-        Number(latestOrderMultipleChoiceQuestion?.order ?? 0),
-      ),
-    );
     return Math.max(
       Number(latestOrderOneChoiceQuestion?.order ?? 0),
       Number(latestOrderMultipleChoiceQuestion?.order ?? 0),

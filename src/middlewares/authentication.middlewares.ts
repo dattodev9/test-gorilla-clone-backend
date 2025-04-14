@@ -37,7 +37,7 @@ export class AuthenticationMiddleware implements NestMiddleware {
         return next();
       }
     } catch (error) {
-      console.log('Access token validation failed:', error.message);
+      console.error('Access token validation failed:', error.message);
     }
 
     try {

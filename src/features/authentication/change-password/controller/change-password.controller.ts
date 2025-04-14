@@ -22,7 +22,7 @@ export class ChangePasswordController {
     try {
       return await this.handler.execute(changePasswordRequestDto);
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       if (error instanceof UserNotFoundError) {
         throw new NotFoundException('User not found');

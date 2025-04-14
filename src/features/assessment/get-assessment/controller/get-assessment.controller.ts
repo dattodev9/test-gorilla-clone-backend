@@ -14,7 +14,6 @@ export class GetAssessmentController {
   @Get()
   public async getAssessment(@Query() request: GetAssessmentRequestDto) {
     try {
-      console.log(request);
       return await this.handler.execute(request);
     } catch (error) {
       console.error(error);

@@ -10,20 +10,43 @@ import { GetCandidateByIdController } from './get-candidate-by-id/controller/get
 import { GetCandidateByIdCommandHandler } from './get-candidate-by-id/command/get-candidate-by-id.command-handler';
 import { DeleteCandidateCommandHandler } from './delete-candidate/command/delete-candidate.command-handler';
 import { DeleteCandidateController } from './delete-candidate/controller/delete-candidate.controller';
+import { GetAssessmentOverviewByIdController } from './get-assessment-overview-by-id/controller/get-assessment-overview-by-id.controller';
+import { GetAssessmentOverviewByIdCommandHandler } from './get-assessment-overview-by-id/command/get-assessment-overview-by-id.command-handler';
+import { GetAssessmentByIdController } from './get-assessment-by-id/controller/get-assessment-by-id.controller';
+import { GetAssessmentByIdCommandHandler } from './get-assessment-by-id/command/get-assessment-by-id.command-handler';
+import { SubmitAssessmentController } from './submit-assessment/controller/submit-assessment.controller';
+import { SubmitAssessmentCommandHandler } from './submit-assessment/command/submit-assessment.command-handler';
+import { OneChoiceQuestion } from '../../entities/one-choice-question.entity';
+import { MultipleChoiceQuestion } from '../../entities/multiple-choice-question.entity';
+import { Test } from '../../entities/test.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Candidate, Assessment])],
-  providers: [
-    CreateCandidateCommandHandler,
-    GetCandidateCommandHandler,
-    GetCandidateByIdCommandHandler,
-    DeleteCandidateCommandHandler,
+  imports: [
+    TypeOrmModule.forFeature([
+      Candidate,
+      Assessment,
+      Test,
+      OneChoiceQuestion,
+      MultipleChoiceQuestion,
+    ]),
   ],
   controllers: [
     CreateCandidateController,
     GetCandidateController,
     GetCandidateByIdController,
+    GetAssessmentOverviewByIdController,
+    GetAssessmentByIdController,
+    SubmitAssessmentController,
     DeleteCandidateController,
+  ],
+  providers: [
+    CreateCandidateCommandHandler,
+    GetCandidateCommandHandler,
+    GetCandidateByIdCommandHandler,
+    GetAssessmentOverviewByIdCommandHandler,
+    GetAssessmentByIdCommandHandler,
+    SubmitAssessmentCommandHandler,
+    DeleteCandidateCommandHandler,
   ],
 })
 export class CandidateModule {}

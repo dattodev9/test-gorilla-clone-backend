@@ -4,12 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   OneToMany,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
 import { OneChoiceQuestion } from './one-choice-question.entity';
 import { MultipleChoiceQuestion } from './multiple-choice-question.entity';
-import { Assessment } from './assessment.entity';
 
 export enum TestStatus {
   DRAFT = 'draft',
@@ -53,8 +50,4 @@ export class Test {
     },
   )
   multipleChoiceQuestions: MultipleChoiceQuestion[];
-
-  @ManyToMany(() => Assessment)
-  @JoinTable()
-  assessments: Assessment[];
 }

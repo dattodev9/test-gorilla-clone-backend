@@ -27,7 +27,7 @@ export class SignInController {
     try {
       return await this.handler.execute(res, signInRequestDto);
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       if (error instanceof UserNotFoundError) {
         throw new NotFoundException('User not found');

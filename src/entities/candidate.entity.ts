@@ -9,14 +9,14 @@ import { Assessment } from './assessment.entity';
 
 export enum CandidateStatus {
   DRAFT = 'draft',
-  INVITED = 'invited',
   DONE = 'done',
+  CANCELED = 'canceled',
 }
 
 export type DoneTests = {
   id: string;
   name: string;
-  overall: string;
+  overall: number;
 };
 
 @Entity()

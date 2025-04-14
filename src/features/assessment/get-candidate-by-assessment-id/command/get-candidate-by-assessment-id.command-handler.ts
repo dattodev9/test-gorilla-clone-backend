@@ -99,16 +99,16 @@ export class GetCandidateByAssessmentIdCommandHandler {
       conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
 
     const query = `
-        SELECT c.id   AS "id",
-               c.name AS "name",
-               c.done_tests ->>'overall' AS "overall", c.status AS "status", c.created_at AS "createdAt"
-        FROM
-            candidate c
-        WHERE
-            c.assessment_id = '${assessmentId}' ${whereClause}
+        SELECT c.id                                                            AS "id",
+               c.name                                                          AS "name",
+               COALESCE((SELECT AVG((value ->> 'overall')::float)
+                         FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "overall",
+               c.status                                                        AS "status",
+               c.created_at                                                    AS "createdAt"
+        FROM candidate c
+        WHERE c.assessment_id = '${assessmentId}' ${whereClause}
         ORDER BY c.${sortBy} ${direction}
-            LIMIT ${take}
-        OFFSET ${skip}
+        LIMIT ${take} OFFSET ${skip}
     `;
 
     return await AppDataSource.query(query);

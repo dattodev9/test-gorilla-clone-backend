@@ -15,7 +15,6 @@ export class ChangePasswordCommandHandler {
   ) {}
 
   public async execute(command: ChangePasswordCommand) {
-    console.log(command);
     const userInfo = await this.userRepository.findOne({
       where: {
         username: command.username,
