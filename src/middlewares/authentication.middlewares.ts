@@ -63,9 +63,10 @@ export class AuthenticationMiddleware implements NestMiddleware {
     const refreshTokenPayload = await this.jwtService.verifyToken(refreshToken);
     const username = refreshTokenPayload?.username;
 
-    const cachedRefreshToken = await this.cacheManager.get<string>(
-      `refreshToken-${username}`,
-    );
+    const cachedRefreshToken = await this.cacheManager.get<string>(`refreshToken-${username}`);
+    console.log('Retrieved key:', `refreshToken-${username}`);
+    console.log('Retrieved value:', cachedRefreshToken);
+
     if (refreshToken !== cachedRefreshToken) {
       throw new ForbiddenException('Refresh token is invalid');
     }

@@ -22,6 +22,7 @@ import { CandidateModule } from './features/candidate/candidate.module';
     ConfigModule.forRoot(),
     CacheModule.register({
       isGlobal: true,
+      ttl: 86400 * 30,
     }),
     PostgresModule,
     AuthenticationModule,

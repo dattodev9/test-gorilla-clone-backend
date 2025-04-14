@@ -72,6 +72,7 @@ export class GetAssessmentCommandHandler {
                     a.id AS "id",
                     a.name AS "name",
                     a.created_at AS "createdAt",
+                    a.status as "status",
                     COUNT(c.id) AS "totalCandidates",
                     COUNT(CASE WHEN c.status = 'done' THEN 1 END) AS "doneCandidates",
                     COUNT(CASE WHEN c.status != 'done' THEN 1 END) AS "otherCandidates"
