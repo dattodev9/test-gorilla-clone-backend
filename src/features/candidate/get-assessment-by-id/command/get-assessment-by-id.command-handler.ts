@@ -3,6 +3,7 @@ import { AppDataSource } from '../../../../shared/app-data-source';
 import { OneChoiceQuestion } from '../../../../entities/one-choice-question.entity';
 import { CandidateStatus } from '../../../../entities/candidate.entity';
 import { Test } from '../../../../entities/test.entity';
+import { AssessmentStatus } from 'src/entities/assessment.entity';
 
 export type QuestionList = Pick<
   OneChoiceQuestion,
@@ -72,8 +73,9 @@ export class GetAssessmentByIdCommandHandler {
                  LEFT JOIN assessment a ON att.assessment_id = a.id
                  LEFT JOIN candidate c ON a.id = c.assessment_id
         WHERE c.id = '${id}'
-          AND c.status IN ('${CandidateStatus.DRAFT}')
-        GROUP BY t.id
+          AND c.status IN ('${CandidateStatus.ACTIVE}')
+          AND a.status IN ('${AssessmentStatus.ACTIVE}','${AssessmentStatus.PUBLISHED}')
+          GROUP BY t.id
     `;
     return await AppDataSource.query(query);
   }

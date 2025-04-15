@@ -13,7 +13,6 @@ export class CreateOneChoiceQuestionCommandHandler {
   ) {}
 
   public async execute(command: CreateOneChoiceQuestionCommand) {
-    console.log(command);
     await this.oneChoiceQuestionRepository.save(
       this.oneChoiceQuestionRepository.create({
         name: command.name,

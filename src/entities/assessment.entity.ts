@@ -11,8 +11,9 @@ import { Test } from './test.entity';
 import { Candidate } from './candidate.entity';
 
 export enum AssessmentStatus {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
   ACTIVE = 'active',
-  INACTIVE = 'inactive',
   ARCHIVED = 'archived',
 }
 
@@ -28,7 +29,7 @@ export class Assessment {
   jobRole: string;
 
   @Column({
-    default: AssessmentStatus.INACTIVE,
+    default: AssessmentStatus.DRAFT,
   })
   status: AssessmentStatus;
 

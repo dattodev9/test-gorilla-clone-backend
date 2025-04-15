@@ -10,7 +10,7 @@ import { MultipleChoiceQuestion } from './multiple-choice-question.entity';
 
 export enum TestStatus {
   DRAFT = 'draft',
-  ACTIVE = 'active',
+  PUBLISHED = 'published',
   ARCHIVED = 'archived',
 }
 

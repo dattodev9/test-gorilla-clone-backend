@@ -8,9 +8,10 @@ import { SignInCommandHandler } from './sign-in/command/sign-in.command-handler'
 import { JwtModule } from 'src/shared/modules/jwt-auth/jwt.module';
 import { ChangePasswordController } from './change-password/controller/change-password.controller';
 import { ChangePasswordCommandHandler } from './change-password/command/change-password.command-handler';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), JwtModule],
+  imports: [TypeOrmModule.forFeature([User]), JwtModule, ConfigModule],
   controllers: [SignInController, SignUpController, ChangePasswordController],
   providers: [
     SignInCommandHandler,

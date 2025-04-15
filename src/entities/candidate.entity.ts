@@ -8,7 +8,7 @@ import {
 import { Assessment } from './assessment.entity';
 
 export enum CandidateStatus {
-  DRAFT = 'draft',
+  ACTIVE = 'active',
   DONE = 'done',
   CANCELED = 'canceled',
 }
@@ -39,7 +39,7 @@ export class Candidate {
   public doneTests?: Array<DoneTests>;
 
   @Column({
-    default: CandidateStatus.DRAFT,
+    default: CandidateStatus.ACTIVE,
   })
   status: CandidateStatus;
 

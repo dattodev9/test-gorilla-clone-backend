@@ -13,11 +13,14 @@ import { CandidateNotFoundError } from '../error/candidate-not-found.error';
 import { CandidateStatusInvalidError } from '../error/candidate-status-invalid.error';
 import { Test } from '../../../../entities/test.entity';
 import { TestNotFoundError } from '../error/test-not-found.error';
+import { Assessment, AssessmentStatus } from 'src/entities/assessment.entity';
 
 export class SubmitAssessmentCommandHandler {
   constructor(
     @InjectRepository(Candidate)
     private candidateRepository: Repository<Candidate>,
+    @InjectRepository(Assessment)
+    private assessmentRepository: Repository<Assessment>,
     @InjectRepository(Test)
     private testRepository: Repository<Test>,
     @InjectRepository(OneChoiceQuestion)
@@ -31,13 +34,14 @@ export class SubmitAssessmentCommandHandler {
       where: {
         id: id,
       },
+      relations: ['assessment'],
     });
 
     if (!candidate) {
       throw new CandidateNotFoundError();
     }
 
-    if (candidate.status !== CandidateStatus.DRAFT) {
+    if (candidate.status !== CandidateStatus.ACTIVE) {
       throw new CandidateStatusInvalidError();
     }
 
@@ -91,31 +95,18 @@ export class SubmitAssessmentCommandHandler {
 
           const userAnswers = answer.answer.split(',').map((ans) => ans.trim());
 
-          // let questionPoint = 0;
-          //
-          // for (const userAnswer of userAnswers) {
-          //   if (trueAnswers.includes(userAnswer)) {
-          //     questionPoint += 1;
-          //   } else {
-          //     questionPoint -= 1;
-          //   }
-          // }
-          //
-          // if (questionPoint > 0) {
-          //   totalPoint += questionPoint;
-          // }
-
-          let isTrue = true;
+          let questionPoint = 0;
 
           for (const userAnswer of userAnswers) {
-            if (!trueAnswers.includes(userAnswer)) {
-              isTrue = false;
-              break;
+            if (trueAnswers.includes(userAnswer)) {
+              questionPoint += 1;
+            } else {
+              questionPoint -= 1;
             }
           }
 
-          if (isTrue && userAnswers.length === trueAnswers.length) {
-            totalPoint++;
+          if (questionPoint > 0) {
+            totalPoint += Math.round(questionPoint / question.key.length);
           }
         }
       }
@@ -129,7 +120,11 @@ export class SubmitAssessmentCommandHandler {
         name: existTest.name,
         overall: overall,
       });
-    }
+    }f
+
+    await this.assessmentRepository.update(candidate.assessment.id, {
+      status: AssessmentStatus.ACTIVE,
+    });
 
     return await this.candidateRepository.save({
       ...candidate,

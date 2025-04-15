@@ -64,6 +64,6 @@ export class GetAssessmentByIdCommandHandler {
                     `;
 
     const result: AssessmentResponse[] = await AppDataSource.query(query);
-    return result;
+    return result[0];
   }
 }

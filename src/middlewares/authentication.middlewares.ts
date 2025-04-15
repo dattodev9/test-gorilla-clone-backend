@@ -33,6 +33,11 @@ export class AuthenticationMiddleware implements NestMiddleware {
         const accessTokenPayload =
           await this.jwtService.verifyToken(accessToken);
         await this.validateUser(accessTokenPayload.username);
+
+        const cachedRefreshToken = await this.cacheManager.get<string>(
+          `refreshToken-${accessTokenPayload.username}`,
+        );
+
         res.set('username', accessTokenPayload.username);
         return next();
       }
@@ -63,7 +68,9 @@ export class AuthenticationMiddleware implements NestMiddleware {
     const refreshTokenPayload = await this.jwtService.verifyToken(refreshToken);
     const username = refreshTokenPayload?.username;
 
-    const cachedRefreshToken = await this.cacheManager.get<string>(`refreshToken-${username}`);
+    const cachedRefreshToken = await this.cacheManager.get<string>(
+      `refreshToken-${username}`,
+    );
     console.log('Retrieved key:', `refreshToken-${username}`);
     console.log('Retrieved value:', cachedRefreshToken);
 

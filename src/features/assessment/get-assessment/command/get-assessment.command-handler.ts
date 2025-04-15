@@ -71,6 +71,7 @@ export class GetAssessmentCommandHandler {
                 SELECT 
                     a.id AS "id",
                     a.name AS "name",
+                    a.job_role as "jobRole",
                     a.created_at AS "createdAt",
                     a.status as "status",
                     COUNT(c.id) AS "totalCandidates",

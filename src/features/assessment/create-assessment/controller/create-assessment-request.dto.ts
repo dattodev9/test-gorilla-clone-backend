@@ -1,10 +1,4 @@
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsArray, IsString, Length } from 'class-validator';
 
 export class CreateAssessmentRequestDto {
   @IsString()
@@ -16,7 +10,5 @@ export class CreateAssessmentRequestDto {
   jobRole: string;
 
   @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(5)
   testIds: string[];
 }

@@ -49,7 +49,7 @@ export class UpdateAssessmentCommandHandler {
       const tests = await this.testRepository.find({
         where: {
           id: In(command.testIds),
-          status: TestStatus.ACTIVE,
+          status: TestStatus.PUBLISHED,
         },
       });
 

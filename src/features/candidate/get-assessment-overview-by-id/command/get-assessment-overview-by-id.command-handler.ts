@@ -4,7 +4,10 @@ import {
   Candidate,
   CandidateStatus,
 } from '../../../../entities/candidate.entity';
-import { Assessment } from '../../../../entities/assessment.entity';
+import {
+  Assessment,
+  AssessmentStatus,
+} from '../../../../entities/assessment.entity';
 import { Test } from '../../../../entities/test.entity';
 
 type TestAssessmentOverviewById = Pick<Test, 'name'> & {
@@ -62,7 +65,8 @@ export class GetAssessmentOverviewByIdCommandHandler {
                  LEFT JOIN
              test t ON at.test_id = t.id
         WHERE c.id = '${id}'
-          AND c.status IN ('${CandidateStatus.DRAFT}')
+          AND c.status IN ('${CandidateStatus.ACTIVE}')
+          AND a.status IN ('${AssessmentStatus.ACTIVE}', '${AssessmentStatus.PUBLISHED}')
         GROUP BY c.id, a.job_role
     `;
 

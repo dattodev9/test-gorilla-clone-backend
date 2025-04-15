@@ -10,6 +10,7 @@ import { JwtService } from '../../../../shared/modules/jwt-auth/jwt.service';
 import { Response } from 'express';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { ConfigService } from '@nestjs/config';
 
 Inject();
 
@@ -19,6 +20,7 @@ export class SignInCommandHandler {
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly configService: ConfigService,
   ) {}
 
   public async execute(res: Response, command: SignInCommand) {
@@ -48,7 +50,7 @@ export class SignInCommandHandler {
         ...payload,
         type: 'accessToken',
       },
-      '15m',
+      this.configService.get<string>('ACCESS_TOKEN_EXPIRES') ?? '15m',
     );
 
     const refreshToken = await this.jwtService.generateToken(
@@ -56,7 +58,7 @@ export class SignInCommandHandler {
         ...payload,
         type: 'refreshToken',
       },
-      '7d',
+      this.configService.get<string>('ACCESS_TOKEN_EXPIRES') ?? '7d',
     );
 
     await this.cacheManager.set(
