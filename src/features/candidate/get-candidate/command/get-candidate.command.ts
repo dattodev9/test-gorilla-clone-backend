@@ -5,5 +5,6 @@ export class GetCandidateCommand extends PaginationRequestDto {
   name?: string;
   email?: string;
   status?: CandidateStatus[];
-  assessmentId?: string;
+  overallMin?: number;
+  overallMax?: number;
 }

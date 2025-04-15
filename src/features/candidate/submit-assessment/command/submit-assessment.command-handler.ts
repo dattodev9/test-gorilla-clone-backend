@@ -120,7 +120,7 @@ export class SubmitAssessmentCommandHandler {
         name: existTest.name,
         overall: overall,
       });
-    }f
+    }
 
     await this.assessmentRepository.update(candidate.assessment.id, {
       status: AssessmentStatus.ACTIVE,

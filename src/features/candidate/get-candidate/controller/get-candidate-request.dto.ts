@@ -1,6 +1,14 @@
 import { PaginationRequestDto } from '../../../../common/pagination/pagination-request-dto';
 import { CandidateStatus } from '../../../../entities/candidate.entity';
-import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+  Max,
+  Min,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetCandidateRequestDto extends PaginationRequestDto {
@@ -20,7 +28,13 @@ export class GetCandidateRequestDto extends PaginationRequestDto {
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   status?: CandidateStatus[];
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  assessmentId?: string;
+  @Min(1)
+  overallMin?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Max(100)
+  overallMax?: number;
 }

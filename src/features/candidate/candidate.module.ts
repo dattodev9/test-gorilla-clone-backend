@@ -19,6 +19,8 @@ import { SubmitAssessmentCommandHandler } from './submit-assessment/command/subm
 import { OneChoiceQuestion } from '../../entities/one-choice-question.entity';
 import { MultipleChoiceQuestion } from '../../entities/multiple-choice-question.entity';
 import { Test } from '../../entities/test.entity';
+import { UpdateCandidateStatusCommandHandler } from './update-candidate-status/command/update-candidate-status.command-handler';
+import { UpdateCandidateStatusController } from './update-candidate-status/controller/update-candidate-status.controller';
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { Test } from '../../entities/test.entity';
     GetCandidateByIdController,
     GetAssessmentOverviewByIdController,
     GetAssessmentByIdController,
+    UpdateCandidateStatusController,
     SubmitAssessmentController,
     DeleteCandidateController,
   ],
@@ -45,6 +48,7 @@ import { Test } from '../../entities/test.entity';
     GetCandidateByIdCommandHandler,
     GetAssessmentOverviewByIdCommandHandler,
     GetAssessmentByIdCommandHandler,
+    UpdateCandidateStatusCommandHandler,
     SubmitAssessmentCommandHandler,
     DeleteCandidateCommandHandler,
   ],
