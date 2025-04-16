@@ -26,6 +26,7 @@
     "migration:drop": "ts-node node_modules/typeorm/cli.js --dataSource=./src/configs/typeorm.config.ts schema:drop"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/class-transformer": "^0.4.0",
     "@nestjs/class-validator": "^0.13.4",
