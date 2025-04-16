@@ -5,6 +5,7 @@ import {
   IsString,
   ValidateNested,
   IsIn,
+  IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -14,7 +15,6 @@ export class QuestionAnswer {
   id: string;
 
   @IsString()
-  @IsNotEmpty()
   answer: string;
 
   @IsString()
@@ -32,6 +32,10 @@ export class Test {
   @ValidateNested({ each: true })
   @Type(() => QuestionAnswer)
   questionAnswers: QuestionAnswer[];
+
+  @IsNumber()
+  @IsNotEmpty()
+  time: number;
 }
 
 export class SubmitAssessmentRequestDto {

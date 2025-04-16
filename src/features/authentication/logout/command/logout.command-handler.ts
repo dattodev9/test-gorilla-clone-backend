@@ -13,6 +13,10 @@ export class LogoutCommandHandler {
     // @ts-expect-error
     await this.cacheManager.del(`refreshToken-${res.username}`);
 
+    res.clearCookie('accessToken');
+
+    res.clearCookie('refreshToken');
+
     return res.status(204).send();
   }
 }

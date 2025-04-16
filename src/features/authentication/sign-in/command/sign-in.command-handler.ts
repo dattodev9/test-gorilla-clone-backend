@@ -66,11 +66,6 @@ export class SignInCommandHandler {
       refreshToken,
       86400 * 7,
     );
-    console.log('Stored key:', `refreshToken-${userInfo.username}`);
-    console.log(
-      'Stored value:',
-      await this.cacheManager.get(`refreshToken-${userInfo.username}`),
-    );
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
@@ -83,10 +78,6 @@ export class SignInCommandHandler {
       sameSite: 'strict',
       path: '/',
     });
-
-    console.log(
-      await this.cacheManager.get(`refreshToken-${userInfo.username}`),
-    );
 
     return res.status(200).json({
       message: 'Sign in successful',

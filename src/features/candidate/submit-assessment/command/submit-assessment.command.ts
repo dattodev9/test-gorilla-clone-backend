@@ -7,6 +7,7 @@ export type QuestionAnswer = {
 export type Test = {
   id: string;
   questionAnswers: QuestionAnswer[];
+  time: number;
 };
 
 export class SubmitAssessmentCommand {

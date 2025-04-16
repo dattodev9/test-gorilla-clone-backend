@@ -71,6 +71,7 @@ export class GetAssessmentOverviewByIdCommandHandler {
     `;
 
     const result: AssessmentOverviewById[] = await AppDataSource.query(query);
+    console.log(result);
     return result[0];
   }
 }

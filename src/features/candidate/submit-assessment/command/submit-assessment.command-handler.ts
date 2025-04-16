@@ -119,6 +119,7 @@ export class SubmitAssessmentCommandHandler {
         id: test.id,
         name: existTest.name,
         overall: overall,
+        time: test.time,
       });
     }
 

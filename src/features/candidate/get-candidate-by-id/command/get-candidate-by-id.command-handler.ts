@@ -7,6 +7,7 @@ import { AppDataSource } from '../../../../shared/app-data-source';
 
 type CandidateResponse = Candidate & {
   overall: string;
+  totalTime: string;
 };
 
 Inject();
@@ -34,6 +35,8 @@ export class GetCandidateByIdCommandHandler {
                c.email                                                         AS "email",
                COALESCE((SELECT AVG((value ->> 'overall')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "overall",
+                                        COALESCE((SELECT AVG((value ->> 'time')::float)
+                         FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalTime",
                c.done_tests                                                    AS "doneTests",
                c.status                                                        AS "status",
                c.created_at                                                    AS "createdAt",
