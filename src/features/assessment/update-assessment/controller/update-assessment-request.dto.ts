@@ -1,6 +1,4 @@
 import {
-  ArrayMaxSize,
-  ArrayMinSize,
   IsArray,
   IsEnum,
   IsOptional,
@@ -21,8 +19,6 @@ export class UpdateAssessmentRequestDto {
   jobRole?: string;
 
   @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(5)
   @IsOptional()
   testIds?: string[];
 

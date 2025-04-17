@@ -8,6 +8,7 @@ export type AssessmentResponse = Assessment & {
   totalCandidates: string;
   doneCandidates: string;
   otherCandidates: string;
+  testCount: string;
 };
 
 Inject();
@@ -68,25 +69,24 @@ export class GetAssessmentCommandHandler {
       conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     const query = `
-                SELECT 
-                    a.id AS "id",
-                    a.name AS "name",
-                    a.job_role as "jobRole",
-                    a.created_at AS "createdAt",
-                    a.status as "status",
-                    COUNT(c.id) AS "totalCandidates",
-                    COUNT(CASE WHEN c.status = 'done' THEN 1 END) AS "doneCandidates",
-                    COUNT(CASE WHEN c.status != 'done' THEN 1 END) AS "otherCandidates"
-                FROM 
-                    assessment a
-                LEFT JOIN 
-                    candidate c ON c.assessment_id = a.id
-                ${whereClause}
-                GROUP BY 
-                    a.id, a.name
-                ORDER BY a.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
-                LIMIT ${take} OFFSET ${skip}
-            `;
+        SELECT
+            a.id AS "id",
+            a.name AS "name",
+            a.job_role AS "jobRole",
+            a.created_at AS "createdAt",
+            a.status AS "status",
+            COUNT(DISTINCT c.id) AS "totalCandidates",
+            COUNT(DISTINCT CASE WHEN c.status = 'done' THEN c.id END) AS "doneCandidates",
+            COUNT(DISTINCT CASE WHEN c.status != 'done' THEN c.id END) AS "otherCandidates",
+            COUNT(DISTINCT at.test_id) AS "testCount"
+        FROM assessment a
+                 LEFT JOIN candidate c ON c.assessment_id = a.id
+                 LEFT JOIN assessment_tests_test at ON at.assessment_id = a.id
+            ${whereClause}
+        GROUP BY a.id, a.name, a.job_role, a.created_at, a.status
+        ORDER BY a.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
+        LIMIT ${take} OFFSET ${skip}
+    `;
 
     const result: AssessmentResponse[] = await AppDataSource.query(query);
     return result;

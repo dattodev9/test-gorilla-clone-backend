@@ -11,6 +11,7 @@ import { UpdateAssessmentCommandHandler } from '../command/update-assessment.com
 import { UpdateAssessmentRequestDto } from './update-assessment-request.dto';
 import { AssessmentNotFoundError } from '../error/assessment-not-found.error';
 import { AssessmentStatusNotValidError } from '../error/assessment-status-not-valid.error';
+import { TestsLengthInvalidError } from '../error/tests-length-invalid.error';
 
 @Controller('/assessment')
 export class UpdateAssessmentController {
@@ -32,6 +33,10 @@ export class UpdateAssessmentController {
 
       if (error instanceof AssessmentStatusNotValidError) {
         throw new BadRequestException('Assessment status is invalid to update');
+      }
+
+      if (error instanceof TestsLengthInvalidError) {
+        throw new BadRequestException('Tests length must be greater than zero');
       }
 
       throw new InternalServerErrorException('Something went wrong');

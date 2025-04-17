@@ -7,6 +7,7 @@ import { AssessmentNotFoundError } from '../error/assessment-not-found.error';
 import { Test, TestStatus } from 'src/entities/test.entity';
 import { TestNotFoundError } from '../../create-assessment/error/test-not-found.error';
 import { AssessmentStatusNotValidError } from '../error/assessment-status-not-valid.error';
+import { TestsLengthInvalidError } from '../error/tests-length-invalid.error';
 
 Inject();
 
@@ -43,6 +44,13 @@ export class UpdateAssessmentCommandHandler {
 
     if (command.jobRole) {
       existAssessment.jobRole = command.jobRole;
+    }
+
+    if (
+      command.status === AssessmentStatus.PUBLISHED &&
+      command?.testIds?.length === 0
+    ) {
+      throw new TestsLengthInvalidError();
     }
 
     if (command.testIds) {
