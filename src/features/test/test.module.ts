@@ -49,10 +49,16 @@ import { DeleteMultipleChoiceQuestionCommandHandler } from './multiple-choice-qu
 import { UpdateMultipleChoiceQuestionController } from './multiple-choice-question/update-multiple-choice-question/controller/update-multiple-choice-question.controller';
 import { GetQuestionByIdController } from './get-question-by-test-id/controller/get-question-by-test-id.controller';
 import { GetQuestionByIdCommandHandler } from './get-question-by-test-id/command/get-question-by-id.command-handler';
+import { GetQuestionImageCommandHandler } from './get-question-image/command/get-question-image.command-handler';
+import { UploadQuestionImageController } from './upload-question-image/controller/upload-question-image.controller';
+import { GetQuestionImageController } from './get-question-image/controller/get-question-image.controller';
+import { UploadQuestionImageCommandHandler } from './upload-question-image/command/upload-question-image.command-handler';
+import { S3Module } from 'src/shared/modules/aws-s3/s3.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Test, OneChoiceQuestion, MultipleChoiceQuestion]),
+    S3Module,
   ],
   controllers: [
     // Test Controllers
@@ -79,6 +85,9 @@ import { GetQuestionByIdCommandHandler } from './get-question-by-test-id/command
     GetMultipleChoiceQuestionByIdController,
     GetMultipleChoiceQuestionByTestIdController,
     UpdateMultipleChoiceQuestionController,
+
+    UploadQuestionImageController,
+    GetQuestionImageController,
   ],
   providers: [
     // Test Command Handlers
@@ -105,6 +114,9 @@ import { GetQuestionByIdCommandHandler } from './get-question-by-test-id/command
     GetMultipleChoiceQuestionByTestIdCommandHandler,
     UpdateMultipleChoiceQuestionCommandHandler,
     DeleteMultipleChoiceQuestionCommandHandler,
+
+    UploadQuestionImageCommandHandler,
+    GetQuestionImageCommandHandler,
   ],
 })
 export class TestModule {}

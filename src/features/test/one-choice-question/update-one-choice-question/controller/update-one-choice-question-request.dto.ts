@@ -16,7 +16,6 @@ export class UpdateOneChoiceQuestionRequestDto {
   name: string;
 
   @IsString()
-  @Length(2, 50)
   @IsOptional()
   content: string;
 

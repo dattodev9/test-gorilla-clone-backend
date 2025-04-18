@@ -14,7 +14,6 @@ export class CreateMultipleChoiceQuestionRequestDto {
   name: string;
 
   @IsString()
-  @Length(2, 500)
   content: string;
 
   @IsArray()

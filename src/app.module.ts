@@ -16,6 +16,7 @@ import { JwtModule } from './shared/modules/jwt-auth/jwt.module';
 import { TestModule } from './features/test/test.module';
 import { AssessmentModule } from './features/assessment/assessment.module';
 import { CandidateModule } from './features/candidate/candidate.module';
+import { S3Module } from './shared/modules/aws-s3/s3.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CandidateModule } from './features/candidate/candidate.module';
       isGlobal: true,
     }),
     PostgresModule,
+    S3Module,
     AuthenticationModule,
     UserProfileModule,
     TypeOrmModule.forFeature([User]),
