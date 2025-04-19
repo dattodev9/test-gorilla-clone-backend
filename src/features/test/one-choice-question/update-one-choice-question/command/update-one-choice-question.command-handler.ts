@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OneChoiceQuestion } from 'src/entities/one-choice-question.entity';
 import { Repository } from 'typeorm';
 import { UpdateOneChoiceQuestionCommand } from './update-one-choice-question.command';
-import { removeUndefinedAttribute } from '../../../../../common/remove-undefined-attribute';
 import { OneChoiceQuestionNotFound } from '../error/one-choice-question-not-found.error';
+import { removeUndefinedAttribute } from '../../../../../shared/remove-undefined-attribute';
 
 Inject();
 

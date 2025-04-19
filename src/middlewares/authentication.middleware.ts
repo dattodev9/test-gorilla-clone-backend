@@ -34,11 +34,10 @@ export class AuthenticationMiddleware implements NestMiddleware {
           await this.jwtService.verifyToken(accessToken);
         await this.validateUser(accessTokenPayload.username);
 
-        const cachedRefreshToken = await this.cacheManager.get<string>(
-          `refreshToken-${accessTokenPayload.username}`,
-        );
-
-        res.set('username', accessTokenPayload.username);
+        req['user'] = {
+          username: accessTokenPayload.username,
+          role: accessTokenPayload.role,
+        };
         return next();
       }
     } catch (error) {
@@ -67,6 +66,7 @@ export class AuthenticationMiddleware implements NestMiddleware {
 
     const refreshTokenPayload = await this.jwtService.verifyToken(refreshToken);
     const username = refreshTokenPayload?.username;
+    const role = refreshTokenPayload?.role;
 
     const cachedRefreshToken = await this.cacheManager.get<string>(
       `refreshToken-${username}`,
@@ -91,7 +91,10 @@ export class AuthenticationMiddleware implements NestMiddleware {
       path: '/',
     });
 
-    res.set('username', username);
+    req['user'] = {
+      username: refreshTokenPayload.username,
+      role: refreshTokenPayload.role,
+    };
     next();
   }
 

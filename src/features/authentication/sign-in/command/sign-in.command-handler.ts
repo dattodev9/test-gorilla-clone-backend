@@ -12,8 +12,6 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
 
-Inject();
-
 export class SignInCommandHandler {
   constructor(
     @InjectRepository(User)
@@ -49,6 +47,7 @@ export class SignInCommandHandler {
       {
         ...payload,
         type: 'accessToken',
+        role: userInfo.role,
       },
       this.configService.get<string>('ACCESS_TOKEN_EXPIRES') ?? '15m',
     );
@@ -57,8 +56,9 @@ export class SignInCommandHandler {
       {
         ...payload,
         type: 'refreshToken',
+        role: userInfo.role,
       },
-      this.configService.get<string>('ACCESS_TOKEN_EXPIRES') ?? '7d',
+      this.configService.get<string>('REFRESH_TOKEN_EXPIRES') ?? '7d',
     );
 
     await this.cacheManager.set(

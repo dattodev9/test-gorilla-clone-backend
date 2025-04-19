@@ -2,9 +2,9 @@ import { Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateMultipleChoiceQuestionCommand } from './update-multiple-choice-question.command';
-import { removeUndefinedAttribute } from '../../../../../common/remove-undefined-attribute';
 import { OneChoiceQuestionNotFound } from '../error/one-choice-question-not-found.error';
 import { MultipleChoiceQuestion } from '../../../../../entities/multiple-choice-question.entity';
+import { removeUndefinedAttribute } from '../../../../../shared/remove-undefined-attribute';
 
 Inject();
 

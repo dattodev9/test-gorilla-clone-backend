@@ -9,7 +9,6 @@ export enum UserRole {
   ADMIN = 'admin',
   HR = 'hr',
   SPECIALIST = 'specialist',
-  NONE = 'none',
 }
 
 @Entity()
@@ -29,7 +28,7 @@ export class User {
   @Column({
     type: 'enum',
     enum: UserRole,
-    default: UserRole.NONE,
+    default: UserRole.ADMIN,
   })
   role: UserRole;
 

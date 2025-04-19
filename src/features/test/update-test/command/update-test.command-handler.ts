@@ -4,7 +4,7 @@ import { Test } from '../../../../entities/test.entity';
 import { Repository } from 'typeorm';
 import { UpdateTestCommand } from './update-test.command';
 import { TestNotFoundError } from '../error/test-not-found.error';
-import { removeUndefinedAttribute } from '../../../../common/remove-undefined-attribute';
+import { removeUndefinedAttribute } from '../../../../shared/remove-undefined-attribute';
 
 Inject();
 
