@@ -50,24 +50,22 @@ export class SubmitAssessmentCommandHandler {
 
     for (const test of tests) {
       let totalPoint: number = 0;
+      let totalQuestionTime = 0;
       const existTest = await this.testRepository.findOne({
         select: ['id', 'name'],
         where: {
           id: test.id,
         },
-        relations: ['one_choice_question', 'multiple_choice_question'],
       });
 
       if (!existTest) {
         throw new TestNotFoundError();
       }
 
-      console.log(existTest);
-
       for (const answer of test.questionAnswers) {
         if (answer.type === 'one-choice-question') {
           const question = await this.oneChoiceQuestion.findOne({
-            select: ['choices', 'key'],
+            select: ['choices', 'key', 'time'],
             where: { id: answer.id },
           });
 
@@ -82,9 +80,11 @@ export class SubmitAssessmentCommandHandler {
           if (answer.answer === trueAnswer) {
             totalPoint += 1;
           }
+          console.log(question);
+          totalQuestionTime += question.time;
         } else if (answer.type === 'multiple-choice-question') {
           const question = await this.multipleChoiceQuestion.findOne({
-            select: ['choices', 'key'],
+            select: ['choices', 'key', 'time'],
             where: { id: answer.id },
           });
 
@@ -111,6 +111,7 @@ export class SubmitAssessmentCommandHandler {
           if (questionPoint > 0) {
             totalPoint += Math.round(questionPoint / question.key.length);
           }
+          totalQuestionTime += question.time;
         }
       }
 
@@ -118,28 +119,12 @@ export class SubmitAssessmentCommandHandler {
         (totalPoint / test.questionAnswers.length) * 100,
       );
 
-      const totalOneChoiceQuestionTime =
-        (existTest.oneChoiceQuestions.length > 0 &&
-          existTest.oneChoiceQuestions.reduce(
-            (totalTestTime, question) => question.time,
-            0,
-          )) ||
-        0;
-
-      const totalMultipleChoiceQuestionTime =
-        (existTest.multipleChoiceQuestions.length > 0 &&
-          existTest.multipleChoiceQuestions.reduce(
-            (totalTestTime, question) => question.time,
-            0,
-          )) ||
-        0;
-
       doneTest.push({
         id: test.id,
         name: existTest.name,
         overall: overall,
         time: test.time,
-        totalTime: totalOneChoiceQuestionTime + totalMultipleChoiceQuestionTime,
+        totalTime: totalQuestionTime,
       });
     }
 
@@ -149,7 +134,7 @@ export class SubmitAssessmentCommandHandler {
 
     return await this.candidateRepository.save({
       ...candidate,
-      doneTests: doneTest,
+      doneTests: doneTest.reverse(),
       status: CandidateStatus.DONE,
     });
   }

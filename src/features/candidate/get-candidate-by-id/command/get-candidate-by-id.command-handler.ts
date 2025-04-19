@@ -35,9 +35,9 @@ export class GetCandidateByIdCommandHandler {
                c.email                                                         AS "email",
                COALESCE((SELECT AVG((value ->> 'overall')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "overall",
-                                        COALESCE((SELECT AVG((value ->> 'time')::float)
+                                        COALESCE((SELECT SUM((value ->> 'time')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalTakeTime",
-               COALESCE((SELECT AVG((value ->> 'totalTime')::float)
+               COALESCE((SELECT SUM((value ->> 'totalTime')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalAssessmentTime",
                c.done_tests                                                    AS "doneTests",
                c.status                                                        AS "status",
@@ -54,8 +54,6 @@ export class GetCandidateByIdCommandHandler {
         WHERE c.id = '${id}'
         GROUP BY c.id, a.id, a.name, a.job_role;
     `;
-
-    console.log(query);
 
     const data: CandidateResponse[] = await AppDataSource.query(query);
     return data[0];
