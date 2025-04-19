@@ -33,22 +33,24 @@ export class GetAssessmentViewByIdCommandHandler {
     id: string,
   ): Promise<AssessmentViewById[]> {
     const query = `
-        SELECT t.id        AS "id",
-               t.name      AS "name",
-               COUNT(q.id) AS "totalQuestions",
-               SUM(q.time) AS "totalTime",
-               JSON_AGG(
-                       JSON_BUILD_OBJECT(
-                               'id', q.id,
-                               'name', q.name,
-                               'content', q.content,
-                               'choices', q.choices,
-                               'time', q.time,
-                               'order', q.order,
-                               'type', q.type
-                       )
-                       ORDER BY q.order
-               )           AS "questionList"
+        SELECT t.id                     AS "id",
+               t.name                   AS "name",
+               COALESCE(COUNT(q.id), 0) AS "totalQuestions",
+               COALESCE(SUM(q.time), 0) AS "totalTime",
+               COALESCE(
+                       JSON_AGG(
+                               JSON_BUILD_OBJECT(
+                                       'id', q.id,
+                                       'name', q.name,
+                                       'content', q.content,
+                                       'choices', q.choices,
+                                       'time', q.time,
+                                       'order', q.order,
+                                       'type', q.type
+                               ) ORDER BY q.order
+                       ),
+                       '[]'
+               )                        AS "questionList"
         FROM test t
                  LEFT JOIN (SELECT ocq.id,
                                    ocq.name,
@@ -71,10 +73,10 @@ export class GetAssessmentViewByIdCommandHandler {
                             FROM multiple_choice_question mcq) q ON t.id = q.test_id
                  LEFT JOIN assessment_tests_test att ON t.id = att.test_id
                  LEFT JOIN assessment a ON att.assessment_id = a.id
-                 LEFT JOIN candidate c ON a.id = c.assessment_id
-        WHERE a.id = '${id}'
+        WHERE a.id = $1
         GROUP BY t.id
     `;
-    return await AppDataSource.query(query);
+
+    return await AppDataSource.query(query, [id]);
   }
 }

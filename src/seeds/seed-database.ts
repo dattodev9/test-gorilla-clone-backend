@@ -104,6 +104,7 @@ export const generateSeedData = () => {
       name: t.name,
       overall: faker.number.int({ min: 60, max: 100 }),
       time: faker.number.int({ min: 60, max: 120 }),
+      totalTime: faker.number.int({ min: 60, max: 120 }),
     }));
 
     return {

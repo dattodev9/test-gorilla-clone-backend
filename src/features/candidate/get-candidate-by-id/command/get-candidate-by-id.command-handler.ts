@@ -36,7 +36,9 @@ export class GetCandidateByIdCommandHandler {
                COALESCE((SELECT AVG((value ->> 'overall')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "overall",
                                         COALESCE((SELECT AVG((value ->> 'time')::float)
-                         FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalTime",
+                         FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalTakeTime",
+               COALESCE((SELECT AVG((value ->> 'totalTime')::float)
+                         FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalAssessmentTime",
                c.done_tests                                                    AS "doneTests",
                c.status                                                        AS "status",
                c.created_at                                                    AS "createdAt",

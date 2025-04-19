@@ -18,6 +18,7 @@ export type DoneTests = {
   name: string;
   overall: number;
   time: number;
+  totalTime: number;
 };
 
 @Entity()

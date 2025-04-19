@@ -55,11 +55,14 @@ export class SubmitAssessmentCommandHandler {
         where: {
           id: test.id,
         },
+        relations: ['one_choice_question', 'multiple_choice_question'],
       });
 
       if (!existTest) {
         throw new TestNotFoundError();
       }
+
+      console.log(existTest);
 
       for (const answer of test.questionAnswers) {
         if (answer.type === 'one-choice-question') {
@@ -115,11 +118,28 @@ export class SubmitAssessmentCommandHandler {
         (totalPoint / test.questionAnswers.length) * 100,
       );
 
+      const totalOneChoiceQuestionTime =
+        (existTest.oneChoiceQuestions.length > 0 &&
+          existTest.oneChoiceQuestions.reduce(
+            (totalTestTime, question) => question.time,
+            0,
+          )) ||
+        0;
+
+      const totalMultipleChoiceQuestionTime =
+        (existTest.multipleChoiceQuestions.length > 0 &&
+          existTest.multipleChoiceQuestions.reduce(
+            (totalTestTime, question) => question.time,
+            0,
+          )) ||
+        0;
+
       doneTest.push({
         id: test.id,
         name: existTest.name,
         overall: overall,
         time: test.time,
+        totalTime: totalOneChoiceQuestionTime + totalMultipleChoiceQuestionTime,
       });
     }
 
