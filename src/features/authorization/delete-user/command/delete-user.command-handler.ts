@@ -10,11 +10,14 @@ export class DeleteUserCommandHandler {
   ) {}
 
   public async execute(id: string) {
+    console.log(id);
     const isUserExisted = await this.userRepository.findOne({
       where: {
         id,
       },
     });
+
+    console.log(isUserExisted);
 
     if (!isUserExisted) {
       throw new UserNotFoundError();

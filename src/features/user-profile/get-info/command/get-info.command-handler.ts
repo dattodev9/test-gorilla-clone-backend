@@ -13,7 +13,8 @@ export class GetInfoCommandHandler {
   ) {}
 
   public async execute(req: Request) {
-    const username = req.get('username');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+    const username = req['user']?.username;
 
     const userInfo = await this.userRepository.findOne({
       select: {
@@ -23,6 +24,7 @@ export class GetInfoCommandHandler {
         hasChangedPassword: true,
       },
       where: {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         username: username,
       },
     });

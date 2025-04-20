@@ -6,12 +6,15 @@ export function RoleMiddleware(requiredRoles: string[]) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
     const userRole = req['user']?.role;
 
-    if (!userRole || !requiredRoles.includes(userRole)) {
-      console.log('Required roles:', requiredRoles);
-      console.log('User role:', userRole);
-
+    if (!userRole) {
       throw new ForbiddenException(
-        'You do not have permission to access this resource',
+        'Authentication required to access this resource',
+      );
+    }
+
+    if (!requiredRoles.includes(userRole)) {
+      throw new ForbiddenException(
+        `Access denied. Required roles: ${requiredRoles.join(', ')}. Your role: ${userRole}`,
       );
     }
 

@@ -40,7 +40,7 @@ const adminAndHRRoutes = [
   { path: '/candidate/:id/assessment', method: RequestMethod.GET },
 ];
 
-const adminHRSpecialistRoutes = [
+const adminAndSpecialistRoutes = [
   { path: '/user-info', method: RequestMethod.GET },
   { path: '/logout', method: RequestMethod.POST },
   { path: '/test', method: RequestMethod.ALL },
@@ -55,13 +55,8 @@ const adminHRSpecialistRoutes = [
   { path: '/change-password', method: RequestMethod.POST },
 ];
 
-const adminExcludedRoutes = [
-  ...publicRoutes,
-  { path: '/user-info', method: RequestMethod.GET },
-  { path: '/logout', method: RequestMethod.POST },
+const adminOnlyRoutes = [
   { path: '/authorization/*', method: RequestMethod.ALL },
-  ...adminAndHRRoutes,
-  ...adminHRSpecialistRoutes,
 ];
 
 @Module({
@@ -95,15 +90,17 @@ export class AppModule implements NestModule {
   private configureRoleMiddlewares(consumer: MiddlewareConsumer) {
     consumer
       .apply(RoleMiddleware([UserRole.ADMIN, UserRole.HR]))
+      .exclude(...adminAndSpecialistRoutes)
       .forRoutes(...adminAndHRRoutes);
 
     consumer
-      .apply(RoleMiddleware([UserRole.ADMIN, UserRole.HR, UserRole.SPECIALIST]))
-      .forRoutes(...adminHRSpecialistRoutes);
+      .apply(RoleMiddleware([UserRole.ADMIN, UserRole.SPECIALIST]))
+      .exclude(...adminAndHRRoutes)
+      .forRoutes(...adminAndSpecialistRoutes);
 
     consumer
       .apply(RoleMiddleware([UserRole.ADMIN]))
-      .exclude(...adminExcludedRoutes)
-      .forRoutes('*');
+      .exclude(...adminAndHRRoutes, ...adminAndSpecialistRoutes)
+      .forRoutes(...adminOnlyRoutes);
   }
 }
