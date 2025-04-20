@@ -18,6 +18,8 @@ import { AssessmentModule } from './features/assessment/assessment.module';
 import { CandidateModule } from './features/candidate/candidate.module';
 import { S3Module } from './shared/modules/aws-s3/s3.module';
 import { RoleMiddleware } from './middlewares/role.middleware';
+import { AuthorizationModule } from './features/authorization/authorization.module';
+import { AppService } from './app.service';
 
 const publicRoutes = [
   { path: '/sign-in', method: RequestMethod.POST },
@@ -57,7 +59,7 @@ const adminExcludedRoutes = [
   ...publicRoutes,
   { path: '/user-info', method: RequestMethod.GET },
   { path: '/logout', method: RequestMethod.POST },
-  { path: '/sign-up', method: RequestMethod.POST },
+  { path: '/authorization/*', method: RequestMethod.ALL },
   ...adminAndHRRoutes,
   ...adminHRSpecialistRoutes,
 ];
@@ -75,9 +77,10 @@ const adminExcludedRoutes = [
     TestModule,
     AssessmentModule,
     CandidateModule,
+    AuthorizationModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
