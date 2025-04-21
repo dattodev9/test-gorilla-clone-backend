@@ -46,14 +46,20 @@ export class GetAssessmentOverviewByIdCommandHandler {
                                         WHERE ocq.test_id = t.id) +
                                        (SELECT COUNT(*)
                                         FROM multiple_choice_question mcq
-                                        WHERE mcq.test_id = t.id),
+                                        WHERE mcq.test_id = t.id) +
+                                       (SELECT COUNT(*)
+                                        FROM coding_question cq
+                                        WHERE cq.test_id = t.id),
                                        'totalTime',
                                        (SELECT COALESCE(SUM(ocq.time), 0)
                                         FROM one_choice_question ocq
                                         WHERE ocq.test_id = t.id) +
                                        (SELECT COALESCE(SUM(mcq.time), 0)
                                         FROM multiple_choice_question mcq
-                                        WHERE mcq.test_id = t.id)
+                                        WHERE mcq.test_id = t.id) +
+                                       (SELECT COALESCE(SUM(cq.time), 0)
+                                        FROM coding_question cq
+                                        WHERE cq.test_id = t.id)
                                )
                                        ) FILTER (WHERE t.id IS NOT NULL), '[]'
                )          AS "tests"

@@ -10,6 +10,12 @@ export class CreateCodingQuestionRequestDto {
   @IsString()
   content: string;
 
+  @IsString()
+  initialCode: string;
+
+  @IsString()
+  callSnippet: string;
+
   @IsArray()
   @ArrayMinSize(1)
   testCases: TestCase[];

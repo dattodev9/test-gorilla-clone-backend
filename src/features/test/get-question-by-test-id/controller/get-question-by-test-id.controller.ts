@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import {
   GetQuestionByIdCommandHandler,
-  Question,
+  QuestionById,
 } from '../command/get-question-by-id.command-handler';
 
 @Controller('/test/:id/question')
@@ -14,7 +14,9 @@ export class GetQuestionByIdController {
   constructor(private handler: GetQuestionByIdCommandHandler) {}
 
   @Get()
-  public async getQuestionById(@Param('id') id: string): Promise<Question[]> {
+  public async getQuestionById(
+    @Param('id') id: string,
+  ): Promise<QuestionById[]> {
     try {
       return await this.handler.execute(id);
     } catch (error) {

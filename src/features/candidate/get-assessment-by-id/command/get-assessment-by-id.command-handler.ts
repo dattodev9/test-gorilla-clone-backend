@@ -4,14 +4,18 @@ import { OneChoiceQuestion } from '../../../../entities/one-choice-question.enti
 import { CandidateStatus } from '../../../../entities/candidate.entity';
 import { Test } from '../../../../entities/test.entity';
 import { AssessmentStatus } from 'src/entities/assessment.entity';
+import { CodingQuestion } from '../../../../entities/coding-question.entity';
 
 export type QuestionList = Pick<
   OneChoiceQuestion,
   'id' | 'name' | 'content' | 'choices' | 'time' | 'order'
-> & {
-  type: 'one-choice-question' | 'multiple-choice-question';
-};
-
+> &
+  Pick<CodingQuestion, 'initialCode' | 'testCases'> & {
+    type:
+      | 'one-choice-question'
+      | 'multiple-choice-question'
+      | 'coding-question';
+  };
 export type TestList = Pick<Test, 'id' | 'name'> & {
   totalQuestions: string;
   totalTime: string;
@@ -42,6 +46,8 @@ export class GetAssessmentByIdCommandHandler {
                                'id', q.id,
                                'name', q.name,
                                'content', q.content,
+                               'initialCode', q.initial_code,
+                               'testCases', q.testCases,
                                'choices', q.choices,
                                'time', q.time,
                                'order', q.order,
@@ -56,6 +62,8 @@ export class GetAssessmentByIdCommandHandler {
                                    ocq.choices,
                                    ocq.time,
                                    ocq.order,
+                                   NULL                  AS "initialCode",
+                                   NULL                  AS "testCases",
                                    ocq.test_id,
                                    'one-choice-question' AS type
                             FROM one_choice_question ocq
@@ -66,16 +74,31 @@ export class GetAssessmentByIdCommandHandler {
                                    mcq.choices,
                                    mcq.time,
                                    mcq.order,
+                                   NULL                       AS "initialCode",
+                                   NULL                       AS "testCases",
                                    mcq.test_id,
                                    'multiple-choice-question' AS type
-                            FROM multiple_choice_question mcq) q ON t.id = q.test_id
+                            FROM multiple_choice_question mcq
+                            UNION ALL
+                            SELECT cq.id,
+                                   cq.name,
+                                   cq.content,
+                                   NULL                                               AS "choices",
+                                   cq.time,
+                                   cq.order,
+                                   cq.initial_code                                    AS "initialCode",
+                                   jsonb_path_query_array(cq.test_cases, '$[0 to 2]') AS "testCases",
+                                   cq.test_id,
+                                   'coding-question'                                  AS type
+                            FROM coding_question cq) q
+                           ON t.id = q.test_id
                  LEFT JOIN assessment_tests_test att ON t.id = att.test_id
                  LEFT JOIN assessment a ON att.assessment_id = a.id
                  LEFT JOIN candidate c ON a.id = c.assessment_id
         WHERE c.id = '${id}'
           AND c.status IN ('${CandidateStatus.ACTIVE}')
-          AND a.status IN ('${AssessmentStatus.ACTIVE}','${AssessmentStatus.PUBLISHED}')
-          GROUP BY t.id
+          AND a.status IN ('${AssessmentStatus.ACTIVE}', '${AssessmentStatus.PUBLISHED}')
+        GROUP BY t.id
     `;
     return await AppDataSource.query(query);
   }

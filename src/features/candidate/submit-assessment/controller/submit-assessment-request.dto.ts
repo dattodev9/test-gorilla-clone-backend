@@ -6,7 +6,6 @@ import {
   ValidateNested,
   IsIn,
   IsNumber,
-  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -19,8 +18,8 @@ export class QuestionAnswer {
   answer: string;
 
   @IsString()
-  @IsIn(['one-choice-question', 'multiple-choice-question'])
-  type: 'one-choice-question' | 'multiple-choice-question';
+  @IsIn(['one-choice-question', 'multiple-choice-question', 'coding-question'])
+  type: 'one-choice-question' | 'multiple-choice-question' | 'coding-question';
 }
 
 export class Test {

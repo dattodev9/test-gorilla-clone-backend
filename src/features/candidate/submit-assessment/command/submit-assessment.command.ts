@@ -1,7 +1,7 @@
 export type QuestionAnswer = {
   id: string;
   answer: string;
-  type: 'one-choice-question' | 'multiple-choice-question';
+  type: 'one-choice-question' | 'multiple-choice-question' | 'coding-question';
 };
 
 export type Test = {

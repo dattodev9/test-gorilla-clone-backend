@@ -5,6 +5,10 @@ export class CreateOneChoiceQuestionCommand {
 
   content: string;
 
+  initialCode: string;
+
+  callSnippet: string;
+
   testCases: TestCase[];
 
   time: number;

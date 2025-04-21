@@ -75,34 +75,31 @@ export class GetTestCommandHandler {
       conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     const query = `
-            SELECT 
-                t.*,
-                t.created_at as "createdAt",
-                (
-                    SELECT COALESCE(SUM(ocq.time), 0)
-                    FROM one_choice_question ocq
-                    WHERE ocq.test_id = t.id
-                ) +
-                (
-                    SELECT COALESCE(SUM(mcq.time), 0)
-                    FROM multiple_choice_question mcq
-                    WHERE mcq.test_id = t.id
-                ) AS "totalTime",
-                (
-                    SELECT COUNT(*)
-                    FROM one_choice_question ocq
-                    WHERE ocq.test_id = t.id
-                ) +
-                (
-                    SELECT COUNT(*)
-                    FROM multiple_choice_question mcq
-                    WHERE mcq.test_id = t.id
-                ) AS "totalQuestion"
-            FROM test t
+        SELECT t.*,
+               t.created_at              as "createdAt",
+               (SELECT COALESCE(SUM(ocq.time), 0)
+                FROM one_choice_question ocq
+                WHERE ocq.test_id = t.id) +
+               (SELECT COALESCE(SUM(mcq.time), 0)
+                FROM multiple_choice_question mcq
+                WHERE mcq.test_id = t.id) +
+               (SELECT COALESCE(SUM(cq.time), 0)
+                FROM coding_question cq
+                WHERE cq.test_id = t.id) AS "totalTime",
+               (SELECT COUNT(*)
+                FROM one_choice_question ocq
+                WHERE ocq.test_id = t.id) +
+               (SELECT COUNT(*)
+                FROM multiple_choice_question mcq
+                WHERE mcq.test_id = t.id) +
+               (SELECT COUNT(*)
+                FROM coding_question cq
+                WHERE cq.test_id = t.id) AS "totalQuestion"
+        FROM test t
             ${whereClause}
-            ORDER BY t.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
-            LIMIT ${take} OFFSET ${skip}
-        `;
+        ORDER BY t.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
+        LIMIT ${take} OFFSET ${skip}
+    `;
     const result: TestResponse[] = await AppDataSource.query(query);
     return result;
   }

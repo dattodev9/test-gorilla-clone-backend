@@ -13,27 +13,34 @@ export class UpdateCodingQuestionRequestDto {
   @IsString()
   @Length(2, 100)
   @IsOptional()
-  name: string;
+  name?: string;
 
   @IsString()
   @IsOptional()
-  content: string;
+  content?: string;
+
+  @IsString()
+  @IsOptional()
+  initialCode?: string;
+
+  @IsString()
+  @IsOptional()
+  callSnippet?: string;
 
   @IsOptional()
   @IsArray()
   @ArrayMinSize(1)
-  testCases: TestCase[];
+  testCases?: TestCase[];
 
   @IsOptional()
   @IsNumber()
   @Min(15)
-  time: number;
+  time?: number;
 
   @IsOptional()
   @IsNumber()
-  order: number;
+  order?: number;
 
-  @IsOptional()
   @IsString()
   testId: string;
 }

@@ -18,6 +18,12 @@ export class CodingQuestion {
   @Column()
   content: string;
 
+  @Column({ type: 'text' })
+  initialCode: string;
+
+  @Column({ type: 'text' })
+  callSnippet: string;
+
   @Column({
     type: 'jsonb',
     array: false,

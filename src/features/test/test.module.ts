@@ -63,6 +63,8 @@ import { UpdateCodingQuestionCommandHandler } from './coding-question/update-cod
 import { DeleteCodingQuestionCommandHandler } from './coding-question/delete-coding-question/command/delete-coding-question.command-handler';
 import { UpdateCodingQuestionController } from './coding-question/update-coding-question/controller/update-coding-question.controller';
 import { DeleteCodingQuestionController } from './coding-question/delete-coding-question/controller/delete-coding-question.controller';
+import { RunCodingQuestionController } from './coding-question/run-coding-question/controller/run-coding-question.controller';
+import { RunCodingQuestionCommandHandler } from './coding-question/run-coding-question/command/run-coding-question.command-handler';
 
 @Module({
   imports: [
@@ -107,6 +109,7 @@ import { DeleteCodingQuestionController } from './coding-question/delete-coding-
     GetCodingQuestionByIdController,
     UpdateCodingQuestionController,
     DeleteCodingQuestionController,
+    RunCodingQuestionController,
   ],
   providers: [
     // Test Command Handlers
@@ -141,6 +144,7 @@ import { DeleteCodingQuestionController } from './coding-question/delete-coding-
     GetCodingQuestionByIdCommandHandler,
     UpdateCodingQuestionCommandHandler,
     DeleteCodingQuestionCommandHandler,
+    RunCodingQuestionCommandHandler,
   ],
 })
 export class TestModule {}

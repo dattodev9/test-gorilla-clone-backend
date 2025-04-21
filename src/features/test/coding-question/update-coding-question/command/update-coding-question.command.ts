@@ -1,15 +1,19 @@
 import { TestCase } from '../../../../../entities/coding-question.entity';
 
 export class UpdateCodingQuestionCommand {
-  name: string;
+  name?: string;
 
-  content: string;
+  content?: string;
 
-  testCases: TestCase[];
+  initialCode?: string;
 
-  time: number;
+  callSnippet?: string;
 
-  order: number;
+  testCases?: TestCase[];
+
+  time?: number;
+
+  order?: number;
 
   testId: string;
 }

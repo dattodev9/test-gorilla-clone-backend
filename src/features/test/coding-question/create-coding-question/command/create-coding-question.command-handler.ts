@@ -14,6 +14,8 @@ export class CreateCodingQuestionCommandHandler {
       this.codingQuestionRepository.create({
         name: command.name,
         content: command.content,
+        initialCode: command.initialCode,
+        callSnippet: command.callSnippet,
         testCases: command.testCases.map((testCase) => {
           return {
             key: testCase.key,

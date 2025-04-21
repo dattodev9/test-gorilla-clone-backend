@@ -21,6 +21,7 @@ import { MultipleChoiceQuestion } from '../../entities/multiple-choice-question.
 import { Test } from '../../entities/test.entity';
 import { UpdateCandidateStatusCommandHandler } from './update-candidate-status/command/update-candidate-status.command-handler';
 import { UpdateCandidateStatusController } from './update-candidate-status/controller/update-candidate-status.controller';
+import { CodingQuestion } from '../../entities/coding-question.entity';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UpdateCandidateStatusController } from './update-candidate-status/contr
       Test,
       OneChoiceQuestion,
       MultipleChoiceQuestion,
+      CodingQuestion,
     ]),
   ],
   controllers: [

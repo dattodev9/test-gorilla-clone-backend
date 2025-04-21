@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import { MultipleChoiceQuestion } from 'src/entities/multiple-choice-question.entity';
 import { OneChoiceQuestion } from 'src/entities/one-choice-question.entity';
 import { DataSource } from 'typeorm';
+import { CodingQuestion } from '../../../../entities/coding-question.entity';
 
 Inject();
 
@@ -34,8 +35,22 @@ export class GetLatestOrderQuestionCommandHandler {
         order: string;
       }>();
 
+    const latestOrderCodingQuestion = await this.datasource
+      .createQueryBuilder()
+      .select('coding_question.order', 'order')
+      .from(CodingQuestion, 'coding_question')
+      .where('coding_question.test_id = :testId', { testId })
+      .orderBy('coding_question.order', 'DESC')
+      .limit(1)
+      .getRawOne<{
+        order: string;
+      }>();
+
     return Math.max(
-      Number(latestOrderOneChoiceQuestion?.order ?? 0),
+      Math.max(
+        Number(latestOrderOneChoiceQuestion?.order ?? 0),
+        Number(latestOrderCodingQuestion?.order ?? 0),
+      ),
       Number(latestOrderMultipleChoiceQuestion?.order ?? 0),
     );
   }

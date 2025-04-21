@@ -3,16 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MultipleChoiceQuestion } from 'src/entities/multiple-choice-question.entity';
 import { OneChoiceQuestion } from 'src/entities/one-choice-question.entity';
 import { Repository } from 'typeorm';
+import { CodingQuestion } from '../../../../entities/coding-question.entity';
 
 enum QuestionType {
   ONE_CHOICE_QUESTION = 'one-choice-question',
   MULTIPLE_CHOICE_QUESTION = 'multiple-choice-question',
+  CODING_QUESTION = 'coding-question',
 }
 
-export type Question = Omit<OneChoiceQuestion, 'key'> & {
-  key: string | string[];
-  type: QuestionType;
-};
+export type QuestionById = Partial<
+  Omit<OneChoiceQuestion, 'key'> &
+    Pick<CodingQuestion, 'testCases' | 'initialCode' | 'callSnippet'> & {
+      key: string | string[];
+      type: QuestionType;
+    }
+>;
 
 Inject();
 
@@ -22,6 +27,8 @@ export class GetQuestionByIdCommandHandler {
     private oneChoiceQuestionRepository: Repository<OneChoiceQuestion>,
     @InjectRepository(MultipleChoiceQuestion)
     private multipleChoiceQuestionRepository: Repository<MultipleChoiceQuestion>,
+    @InjectRepository(CodingQuestion)
+    private codingQuestionRepository: Repository<CodingQuestion>,
   ) {}
 
   public async execute(testId: string) {
@@ -42,16 +49,26 @@ export class GetQuestionByIdCommandHandler {
         },
       });
 
-    return this.mergeAndSortTwoArrayByOrder(
+    const codingQuestionData = await this.codingQuestionRepository.find({
+      where: {
+        test: {
+          id: testId,
+        },
+      },
+    });
+
+    return this.mergeAndSortArrayByOrder(
       oneChoiceQuestionData,
       multipleChoiceQuestionData,
+      codingQuestionData,
     );
   }
 
-  private mergeAndSortTwoArrayByOrder(
+  private mergeAndSortArrayByOrder(
     arr1: OneChoiceQuestion[],
     arr2: MultipleChoiceQuestion[],
-  ): Question[] {
+    arr3: CodingQuestion[],
+  ): QuestionById[] {
     const newArr1 = arr1.map((item) => {
       return {
         ...item,
@@ -66,6 +83,15 @@ export class GetQuestionByIdCommandHandler {
       };
     });
 
-    return [...newArr1, ...newArr2].sort((a, b) => a.order - b.order);
+    const newArr3 = arr3.map((item) => {
+      return {
+        ...item,
+        type: QuestionType.CODING_QUESTION,
+      };
+    });
+
+    return [...newArr1, ...newArr2, ...newArr3].sort(
+      (a, b) => a.order - b.order,
+    );
   }
 }
