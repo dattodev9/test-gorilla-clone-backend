@@ -30,6 +30,7 @@ export const generateSeedData = () => {
     createdAt: faker.date.past(),
     oneChoiceQuestions: [],
     multipleChoiceQuestions: [],
+    codingQuestions: [],
   }));
 
   const oneChoiceQuestions: OneChoiceQuestion[] = [];

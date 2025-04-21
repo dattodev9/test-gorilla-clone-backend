@@ -1,3 +1,4 @@
+import { TestCase } from '../../../../../entities/coding-question.entity';
 import {
   ArrayMinSize,
   IsArray,
@@ -7,9 +8,8 @@ import {
   Length,
   Min,
 } from 'class-validator';
-import { Choice } from 'src/entities/one-choice-question.entity';
 
-export class UpdateOneChoiceQuestionRequestDto {
+export class UpdateCodingQuestionRequestDto {
   @IsString()
   @Length(2, 100)
   @IsOptional()
@@ -22,11 +22,7 @@ export class UpdateOneChoiceQuestionRequestDto {
   @IsOptional()
   @IsArray()
   @ArrayMinSize(1)
-  choices: Choice[];
-
-  @IsOptional()
-  @IsString()
-  key: string;
+  testCases: TestCase[];
 
   @IsOptional()
   @IsNumber()

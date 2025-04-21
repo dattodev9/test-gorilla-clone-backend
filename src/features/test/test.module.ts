@@ -54,10 +54,24 @@ import { UploadQuestionImageController } from './upload-question-image/controlle
 import { GetQuestionImageController } from './get-question-image/controller/get-question-image.controller';
 import { UploadQuestionImageCommandHandler } from './upload-question-image/command/upload-question-image.command-handler';
 import { S3Module } from 'src/shared/modules/aws-s3/s3.module';
+import { CreateCodingQuestionController } from './coding-question/create-coding-question/controller/create-coding-question.controller';
+import { CreateCodingQuestionCommandHandler } from './coding-question/create-coding-question/command/create-coding-question.command-handler';
+import { CodingQuestion } from '../../entities/coding-question.entity';
+import { GetCodingQuestionByIdController } from './coding-question/get-coding-question-by-id/controller/get-coding-question-by-id.controller';
+import { GetCodingQuestionByIdCommandHandler } from './coding-question/get-coding-question-by-id/command/get-coding-question-by-id.command-handler';
+import { UpdateCodingQuestionCommandHandler } from './coding-question/update-coding-question/command/update-coding-question.command-handler';
+import { DeleteCodingQuestionCommandHandler } from './coding-question/delete-coding-question/command/delete-coding-question.command-handler';
+import { UpdateCodingQuestionController } from './coding-question/update-coding-question/controller/update-coding-question.controller';
+import { DeleteCodingQuestionController } from './coding-question/delete-coding-question/controller/delete-coding-question.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Test, OneChoiceQuestion, MultipleChoiceQuestion]),
+    TypeOrmModule.forFeature([
+      Test,
+      OneChoiceQuestion,
+      MultipleChoiceQuestion,
+      CodingQuestion,
+    ]),
     S3Module,
   ],
   controllers: [
@@ -88,6 +102,11 @@ import { S3Module } from 'src/shared/modules/aws-s3/s3.module';
 
     UploadQuestionImageController,
     GetQuestionImageController,
+
+    CreateCodingQuestionController,
+    GetCodingQuestionByIdController,
+    UpdateCodingQuestionController,
+    DeleteCodingQuestionController,
   ],
   providers: [
     // Test Command Handlers
@@ -117,6 +136,11 @@ import { S3Module } from 'src/shared/modules/aws-s3/s3.module';
 
     UploadQuestionImageCommandHandler,
     GetQuestionImageCommandHandler,
+
+    CreateCodingQuestionCommandHandler,
+    GetCodingQuestionByIdCommandHandler,
+    UpdateCodingQuestionCommandHandler,
+    DeleteCodingQuestionCommandHandler,
   ],
 })
 export class TestModule {}

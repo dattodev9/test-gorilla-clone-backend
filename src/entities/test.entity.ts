@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { OneChoiceQuestion } from './one-choice-question.entity';
 import { MultipleChoiceQuestion } from './multiple-choice-question.entity';
+import { CodingQuestion } from './coding-question.entity';
 
 export enum TestStatus {
   DRAFT = 'draft',
@@ -50,4 +51,9 @@ export class Test {
     },
   )
   multipleChoiceQuestions: MultipleChoiceQuestion[];
+
+  @OneToMany(() => CodingQuestion, (codingQuestion) => codingQuestion.test, {
+    onDelete: 'CASCADE',
+  })
+  codingQuestions: CodingQuestion[];
 }
