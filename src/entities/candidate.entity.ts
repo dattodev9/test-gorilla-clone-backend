@@ -10,6 +10,7 @@ import { Assessment } from './assessment.entity';
 export enum CandidateStatus {
   ACTIVE = 'active',
   DONE = 'done',
+  PROCESSING = 'processing',
   CANCELED = 'canceled',
 }
 

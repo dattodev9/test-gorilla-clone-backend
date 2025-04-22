@@ -2,9 +2,12 @@
           const fn = require('./solution');
           const testCases = [{"key":1,"input":"1 1","output":"2"},{"key":2,"input":"1 2","output":"3"},{"key":3,"input":"1 3","output":"4"}];
           const callSnippet = "sum(a, b)";
-        
+          let testCasePassed = 0;
+          let nearestFailedTestCase = {};
+          let check = false;
+
           for (let i = 0; i < testCases.length; i++) {
-            const { input, output } = testCases[i];
+            const { key, input, output } = testCases[i];
             let actual;
             try {
               const args = input.trim().split(/\s+/).map(Number);
@@ -27,28 +30,36 @@
 
             } catch (e) {
               console.log(JSON.stringify({
-                key: i,
-                input,
-                expected: output,
-                actual: null,
+                nearestFailedTestCase,
                 error: e.message,
                 passed: false,
+                testCasePassed: testCasePassed,
+                totalTestCase: testCases.length,
               }, null, 2));
               process.exit(1);
             }
         
             const passed = actual?.toString() === output?.toString();
-            if (!passed) {
-              console.log(JSON.stringify({
-                key: i,
+            if (!passed && !check) {
+              check = true;
+              nearestFailedTestCase = {
+                key: key,
                 input,
                 expected: output,
                 actual: actual?.toString(),
-                passed: false,
-              }, null, 2));
-              process.exit(1);
+              }
+            }
+
+            if(passed){
+              testCasePassed++;
             }
           }
         
-          console.log(JSON.stringify({ passed: true }, null, 2));
+            console.log(JSON.stringify({
+                nearestFailedTestCase,
+                error: "",
+                passed: !check,
+                testCasePassed: testCasePassed,
+                totalTestCase: testCases.length,
+              }, null, 2));
         

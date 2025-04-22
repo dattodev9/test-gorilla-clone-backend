@@ -1,3 +1,7 @@
 function sum(a, b) {
-  return b;
-} module.exports = sum;
+  // Begin enter code
+
+  // End enter code
+} 
+
+module.exports = sum;

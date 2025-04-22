@@ -101,6 +101,7 @@ export class GetCandidateByAssessmentIdCommandHandler {
     const query = `
         SELECT c.id                                                            AS "id",
                c.name                                                          AS "name",
+               c.email                                                         AS "email",
                COALESCE((SELECT AVG((value ->> 'overall')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "overall",
                c.status                                                        AS "status",

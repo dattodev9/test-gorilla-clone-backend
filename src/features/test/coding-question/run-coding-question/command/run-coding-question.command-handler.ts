@@ -56,9 +56,12 @@ export class RunCodingQuestionCommandHandler {
           const fn = require('./solution');
           const testCases = ${JSON.stringify(testCases)};
           const callSnippet = ${JSON.stringify(callSnippet)};
-        
+          let testCasePassed = 0;
+          let nearestFailedTestCase = {};
+          let check = false;
+
           for (let i = 0; i < testCases.length; i++) {
-            const { input, output } = testCases[i];
+            const { key, input, output } = testCases[i];
             let actual;
             try {
               const args = input.trim().split(/\\s+/).map(Number);
@@ -81,30 +84,38 @@ export class RunCodingQuestionCommandHandler {
 
             } catch (e) {
               console.log(JSON.stringify({
-                key: i,
-                input,
-                expected: output,
-                actual: null,
+                nearestFailedTestCase,
                 error: e.message,
                 passed: false,
+                testCasePassed: testCasePassed,
+                totalTestCase: testCases.length,
               }, null, 2));
               process.exit(1);
             }
         
             const passed = actual?.toString() === output?.toString();
-            if (!passed) {
-              console.log(JSON.stringify({
-                key: i,
+            if (!passed && !check) {
+              check = true;
+              nearestFailedTestCase = {
+                key: key,
                 input,
                 expected: output,
                 actual: actual?.toString(),
-                passed: false,
-              }, null, 2));
-              process.exit(1);
+              }
+            }
+
+            if(passed){
+              testCasePassed++;
             }
           }
         
-          console.log(JSON.stringify({ passed: true }, null, 2));
+          console.log(JSON.stringify({
+                nearestFailedTestCase,
+                error: "",
+                passed: !check,
+                testCasePassed: testCasePassed,
+                totalTestCase: testCases.length,
+              }, null, 2));
         `;
 
     await fs.writeFile(path.join(sandboxDir, 'runner.js'), runnerCode);

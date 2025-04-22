@@ -1,10 +1,15 @@
 import { Inject } from '@nestjs/common';
 import { AppDataSource } from '../../../../shared/app-data-source';
 import { OneChoiceQuestion } from '../../../../entities/one-choice-question.entity';
-import { CandidateStatus } from '../../../../entities/candidate.entity';
+import {
+  Candidate,
+  CandidateStatus,
+} from '../../../../entities/candidate.entity';
 import { Test } from '../../../../entities/test.entity';
 import { AssessmentStatus } from 'src/entities/assessment.entity';
 import { CodingQuestion } from '../../../../entities/coding-question.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 export type QuestionList = Pick<
   OneChoiceQuestion,
@@ -29,9 +34,23 @@ export type AssessmentById = {
 Inject();
 
 export class GetAssessmentByIdCommandHandler {
-  constructor() {}
+  constructor(
+    @InjectRepository(Candidate)
+    private candidateRepository: Repository<Candidate>,
+  ) {}
 
   public async execute(id: string) {
+    const candidate = await this.candidateRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    await this.candidateRepository.save({
+      ...candidate,
+      status: CandidateStatus.PROCESSING,
+    });
+
     return await this.getAssessmentById(id);
   }
 
@@ -47,7 +66,7 @@ export class GetAssessmentByIdCommandHandler {
                                'name', q.name,
                                'content', q.content,
                                'initialCode', q.initial_code,
-                               'testCases', q.testCases,
+                               'testCases', q.test_cases,
                                'choices', q.choices,
                                'time', q.time,
                                'order', q.order,
@@ -62,8 +81,8 @@ export class GetAssessmentByIdCommandHandler {
                                    ocq.choices,
                                    ocq.time,
                                    ocq.order,
-                                   NULL                  AS "initialCode",
-                                   NULL                  AS "testCases",
+                                   NULL::text                  AS "initial_code",
+                                   NULL::jsonb                 AS "test_cases",
                                    ocq.test_id,
                                    'one-choice-question' AS type
                             FROM one_choice_question ocq
@@ -74,8 +93,8 @@ export class GetAssessmentByIdCommandHandler {
                                    mcq.choices,
                                    mcq.time,
                                    mcq.order,
-                                   NULL                       AS "initialCode",
-                                   NULL                       AS "testCases",
+                                   NULL::text                  AS "initial_code",
+                                   NULL::jsonb                 AS "test_cases",
                                    mcq.test_id,
                                    'multiple-choice-question' AS type
                             FROM multiple_choice_question mcq
@@ -86,8 +105,8 @@ export class GetAssessmentByIdCommandHandler {
                                    NULL                                               AS "choices",
                                    cq.time,
                                    cq.order,
-                                   cq.initial_code                                    AS "initialCode",
-                                   jsonb_path_query_array(cq.test_cases, '$[0 to 2]') AS "testCases",
+                                   cq.initial_code                                    AS "initial_code",
+                                   jsonb_path_query_array(cq.test_cases, '$[0 to 2]') AS "test_cases",
                                    cq.test_id,
                                    'coding-question'                                  AS type
                             FROM coding_question cq) q
@@ -96,7 +115,7 @@ export class GetAssessmentByIdCommandHandler {
                  LEFT JOIN assessment a ON att.assessment_id = a.id
                  LEFT JOIN candidate c ON a.id = c.assessment_id
         WHERE c.id = '${id}'
-          AND c.status IN ('${CandidateStatus.ACTIVE}')
+          AND c.status IN ('${CandidateStatus.PROCESSING}')
           AND a.status IN ('${AssessmentStatus.ACTIVE}', '${AssessmentStatus.PUBLISHED}')
         GROUP BY t.id
     `;

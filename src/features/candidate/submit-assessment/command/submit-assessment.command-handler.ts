@@ -18,11 +18,25 @@ import {
   CodingQuestion,
   TestCase,
 } from '../../../../entities/coding-question.entity';
-import path from 'path';
-import fs from 'fs/promises';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { exec } from 'child_process';
 import { CodingQuestionNotFound } from '../../../test/coding-question/update-coding-question/error/coding-question-not-found.error';
 
+export type NearestFailedTestCase = {
+  key: number;
+  input: string;
+  expected: string;
+  actual: string;
+};
+
+export type RunCodingQuestion = {
+  nearestFailedTestCase: NearestFailedTestCase;
+  error: string;
+  passed: boolean;
+  testCasePassed: number;
+  totalTestCase: number;
+};
 export class SubmitAssessmentCommandHandler {
   constructor(
     @InjectRepository(Candidate)
@@ -51,7 +65,7 @@ export class SubmitAssessmentCommandHandler {
       throw new CandidateNotFoundError();
     }
 
-    if (candidate.status !== CandidateStatus.ACTIVE) {
+    if (candidate.status !== CandidateStatus.PROCESSING) {
       throw new CandidateStatusInvalidError();
     }
 
@@ -125,7 +139,12 @@ export class SubmitAssessmentCommandHandler {
         } else if (answer.type === 'coding-question') {
           const codingQuestion = await this.codingQuestionRepository.findOne({
             where: { id: answer.id },
-            select: { testCases: true, callSnippet: true },
+            select: {
+              id: true,
+              testCases: true,
+              callSnippet: true,
+              time: true,
+            },
           });
 
           if (!codingQuestion) {
@@ -139,7 +158,9 @@ export class SubmitAssessmentCommandHandler {
           );
 
           if (result) {
-            totalPoint += 1;
+            totalPoint += Math.round(
+              result.testCasePassed / result.totalTestCase,
+            );
           }
           totalQuestionTime += codingQuestion.time;
         }
@@ -162,9 +183,10 @@ export class SubmitAssessmentCommandHandler {
       status: AssessmentStatus.ACTIVE,
     });
 
-    return await this.candidateRepository.save({
+    await this.candidateRepository.save({
       ...candidate,
-      doneTests: doneTest.reverse(),
+      doneTests: doneTest,
+      takeDate: new Date(),
       status: CandidateStatus.DONE,
     });
   }
@@ -173,7 +195,7 @@ export class SubmitAssessmentCommandHandler {
     code: string,
     testCases: TestCase[],
     callSnippet: string,
-  ): Promise<boolean> {
+  ): Promise<RunCodingQuestion> {
     const sandboxDir = path.join(process.cwd(), 'sandbox');
     await fs.mkdir(sandboxDir, { recursive: true });
 
@@ -183,9 +205,12 @@ export class SubmitAssessmentCommandHandler {
           const fn = require('./solution');
           const testCases = ${JSON.stringify(testCases)};
           const callSnippet = ${JSON.stringify(callSnippet)};
-        
+          let testCasePassed = 0;
+          let nearestFailedTestCase = {};
+          let check = false;
+
           for (let i = 0; i < testCases.length; i++) {
-            const { input, output } = testCases[i];
+            const { key, input, output } = testCases[i];
             let actual;
             try {
               const args = input.trim().split(/\\s+/).map(Number);
@@ -205,19 +230,41 @@ export class SubmitAssessmentCommandHandler {
               
               const run = new Function('fn', \`return \${callSnippet};\`);
               actual = run(fn);
+
             } catch (e) {
-              console.log(JSON.stringify(false));
+              console.log(JSON.stringify({
+                nearestFailedTestCase,
+                error: e.message,
+                passed: false,
+                testCasePassed: testCasePassed,
+                totalTestCase: testCases.length,
+              }, null, 2));
               process.exit(1);
             }
         
             const passed = actual?.toString() === output?.toString();
-            if (!passed) {
-              console.log(JSON.stringify(false));
-              process.exit(1);
+            if (!passed && !check) {
+              check = true;
+              nearestFailedTestCase = {
+                key: key,
+                input,
+                expected: output,
+                actual: actual?.toString(),
+              }
+            }
+
+            if(passed){
+              testCasePassed++;
             }
           }
         
-          console.log(JSON.stringify(true));
+            console.log(JSON.stringify({
+                nearestFailedTestCase,
+                error: "",
+                passed: !check,
+                testCasePassed: testCasePassed,
+                totalTestCase: testCases.length,
+              }, null, 2));
         `;
 
     await fs.writeFile(path.join(sandboxDir, 'runner.js'), runnerCode);
@@ -226,18 +273,24 @@ export class SubmitAssessmentCommandHandler {
       exec(
         `docker exec test-golilla-clone-node-code-runner node runner.js`,
         { cwd: sandboxDir },
-        (error, stdout) => {
-          const output = stdout.trim().split('\n').pop();
+        (error, stdout, stderr) => {
+          if (error) {
+            try {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              const errResult = JSON.parse(stdout);
+              return resolve(errResult);
+            } catch {
+              // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+              return reject(stderr || 'Execution error');
+            }
+          }
           try {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const result = JSON.parse(output);
-            resolve(result);
-          } catch (err) {
-            console.error(err);
+            const result = JSON.parse(stdout);
+            return resolve(result);
+          } catch {
             // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-            reject('Failed to parse result: ' + output);
+            return reject('Failed to parse result');
           }
         },
       );
