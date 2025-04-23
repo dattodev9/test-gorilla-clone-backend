@@ -15,5 +15,5 @@ export class UpdateCodingQuestionCommand {
 
   order?: number;
 
-  testId: string;
+  testId?: string;
 }

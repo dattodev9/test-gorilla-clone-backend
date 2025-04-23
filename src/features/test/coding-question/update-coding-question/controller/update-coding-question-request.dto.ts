@@ -42,5 +42,6 @@ export class UpdateCodingQuestionRequestDto {
   order?: number;
 
   @IsString()
-  testId: string;
+  @IsOptional()
+  testId?: string;
 }
