@@ -1,7 +1,7 @@
 
           const fn = require('./solution');
-          const testCases = [{"key":1,"input":"\"A man, a plan, a canal: Panama\"","output":"true"},{"key":2,"input":"\"race a car\"","output":"false"},{"key":3,"input":"\" \" ","output":"true"}];
-          const callSnippet = "isPalindrome(s)";
+          const testCases = [{"key":1,"input":"[1,3] [2]","output":"2"},{"key":2,"input":"[1,2] [3,4]","output":"2.5"}];
+          const callSnippet = "findMedianSortedArrays(nums1, nums2)";
           let testCasePassed = 0;
           let nearestFailedTestCase = {};
           let check = false;
@@ -37,15 +37,57 @@
             if ((inputStr.trim().startsWith('[') && inputStr.trim().endsWith(']')) || 
                 (inputStr.trim().startsWith('{') && inputStr.trim().endsWith('}'))) {
               try {
+                return JSON.parse(inputStr.replace(/'/g, '"'));
               } catch (e) {
               }
             }
-          
+            
+            const potentialJsonPattern = /(\[.*?\]|\{.*?\})/g;
+            const jsonMatches = inputStr.match(potentialJsonPattern);
+            
+            if (jsonMatches && jsonMatches.length > 1) {
+              return jsonMatches.map(match => {
+                try {
+                  return JSON.parse(match.replace(/'/g, '"'));
+                } catch (e) {
+                  return match;
+                }
+              });
+            }
+            
+            if (!inputStr.includes('"') && !inputStr.includes("'") && 
+                !inputStr.includes('[') && !inputStr.includes('{')) {
+              return inputStr.trim().split(/\s+/).map(arg => parseValue(arg));
+            }
+            
             let args = [];
             let currentArg = '';
             let inQuotes = false;
             let bracketCount = 0;
-          
+            let separator = ',';
+            
+            if (inputStr.includes('"') || inputStr.includes("'") || 
+                inputStr.includes('[') || inputStr.includes('{')) {
+              let hasSpacesOutside = false;
+              let tempInQuotes = false;
+              let tempBracketCount = 0;
+              
+              for (let i = 0; i < inputStr.length; i++) {
+                const char = inputStr[i];
+                if (char === '"' || char === "'") tempInQuotes = !tempInQuotes;
+                else if (char === '[' || char === '{') tempBracketCount++;
+                else if (char === ']' || char === '}') tempBracketCount--;
+                else if (char === ' ' && !tempInQuotes && tempBracketCount === 0) {
+                  hasSpacesOutside = true;
+                  break;
+                }
+              }
+              
+              separator = hasSpacesOutside ? ' ' : ',';
+            } else {
+              separator = ' ';
+            }
+            
             for (let i = 0; i < inputStr.length; i++) {
               const char = inputStr[i];
               
@@ -58,8 +100,10 @@
               } else if (char === ']' || char === '}') {
                 bracketCount--;
                 currentArg += char;
-              } else if (char === ',' && !inQuotes && bracketCount === 0) {
-                args.push(currentArg.trim());
+              } else if (char === separator && !inQuotes && bracketCount === 0) {
+                if (currentArg.trim()) {
+                  args.push(currentArg.trim());
+                }
                 currentArg = '';
               } else {
                 currentArg += char;
