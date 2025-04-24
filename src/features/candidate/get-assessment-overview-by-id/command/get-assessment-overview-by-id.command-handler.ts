@@ -71,7 +71,7 @@ export class GetAssessmentOverviewByIdCommandHandler {
                  LEFT JOIN
              test t ON at.test_id = t.id
         WHERE c.id = '${id}'
-          AND c.status IN ('${CandidateStatus.PROCESSING}')
+          AND c.status IN ('${CandidateStatus.ACTIVE}')
           AND a.status IN ('${AssessmentStatus.ACTIVE}', '${AssessmentStatus.PUBLISHED}')
         GROUP BY c.id, a.job_role
     `;
