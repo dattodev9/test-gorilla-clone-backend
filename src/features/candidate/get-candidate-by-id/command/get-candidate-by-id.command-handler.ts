@@ -48,11 +48,22 @@ export class GetCandidateByIdCommandHandler {
                                'name', a.name,
                                'jobRole', a.job_role
                        ), '{}'
-               )                                                               AS "assessment"
+               )                                                               AS "assessment",
+               COALESCE(
+                       JSON_BUILD_OBJECT(
+                                'id', ct.id,
+                               'isFullScreenExited', ct.is_full_screen_exited,
+                               'isDevToolsOpened', ct.is_dev_tools_opened,
+                               'tabChangeCount', ct.tab_change_count,
+                               'screenCaptureImages', ct.screen_capture_images,
+                               'webcamCaptureImages', ct.webcam_capture_images
+                       ), '{}'
+               )                                                               AS "candidateTracking"                                                                              
         FROM candidate c
                  LEFT JOIN assessment a ON c.assessment_id = a.id
+                 LEFT JOIN candidate_tracking ct ON ct.candidate_id = c.id
         WHERE c.id = '${id}'
-        GROUP BY c.id, a.id, a.name, a.job_role;
+        GROUP BY c.id, a.id, a.name, a.job_role, ct.id, ct.is_full_screen_exited, ct.is_dev_tools_opened, ct.tab_change_count, ct.screen_capture_images, ct.webcam_capture_images;
     `;
 
     const data: CandidateResponse[] = await AppDataSource.query(query);

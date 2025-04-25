@@ -22,11 +22,13 @@ import { Test } from '../../entities/test.entity';
 import { UpdateCandidateStatusCommandHandler } from './update-candidate-status/command/update-candidate-status.command-handler';
 import { UpdateCandidateStatusController } from './update-candidate-status/controller/update-candidate-status.controller';
 import { CodingQuestion } from '../../entities/coding-question.entity';
+import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Candidate,
+      CandidateTracking,
       Assessment,
       Test,
       OneChoiceQuestion,

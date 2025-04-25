@@ -107,6 +107,7 @@ export const generateSeedData = () => {
       time: faker.number.int({ min: 60, max: 120 }),
       totalTime: faker.number.int({ min: 60, max: 120 }),
     }));
+    const candidateTrackings = [];
 
     return {
       id: faker.string.uuid(),
@@ -117,6 +118,7 @@ export const generateSeedData = () => {
       takeDate: faker.datatype.boolean() ? faker.date.past() : undefined,
       createdAt: faker.date.past(),
       assessment,
+      candidateTrackings,
     };
   });
 
