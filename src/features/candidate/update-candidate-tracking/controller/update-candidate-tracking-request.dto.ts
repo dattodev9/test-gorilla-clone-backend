@@ -1,24 +1,4 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Min,
-  ValidateNested,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { ImageType } from 'src/entities/candidate-tracking.entity';
-
-class ImageTypeAsClass {
-  @IsString()
-  @Min(1)
-  name: string;
-
-  @IsString()
-  @Min(1)
-  order: string;
-}
+import { IsArray, IsBoolean, IsNumber, IsOptional } from 'class-validator';
 
 export class UpdateCandidateTrackingRequestDto {
   @IsOptional()
@@ -35,13 +15,9 @@ export class UpdateCandidateTrackingRequestDto {
 
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ImageTypeAsClass)
-  screenCaptureImages?: ImageType[];
+  screenCaptureImages?: Express.Multer.File[];
 
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ImageTypeAsClass)
-  webcamCaptureImages?: ImageType[];
+  webcamCaptureImages?: Express.Multer.File[];
 }

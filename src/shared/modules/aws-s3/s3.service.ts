@@ -19,14 +19,19 @@ export class S3Service {
     private readonly s3Client: S3Client,
   ) {}
 
-  async uploadFileToBucket(file: Express.Multer.File): Promise<string> {
+  async uploadFileToBucket(
+    file: Express.Multer.File,
+    folder?: string,
+  ): Promise<string> {
     const bucketName = this.configService.get<string>('AWS_S3_BUCKET');
 
     const timestamp = Date.now().toString();
     const randomId = Math.floor(Math.random() * 1000)
       .toString()
       .padStart(3, '0');
-    const key = slugify(`${timestamp}-${randomId}-${file.originalname}`);
+    const key = slugify(
+      `${folder}/${file.originalname}-${timestamp}-${randomId}`,
+    );
 
     const fileBuffer = file.buffer;
     const fileMimeType = file.mimetype;
@@ -58,9 +63,11 @@ export class S3Service {
         Key: key,
       });
 
-      return await getSignedUrl(this.s3Client, command, {
+      const presignUrl = await getSignedUrl(this.s3Client, command, {
         expiresIn,
       });
+
+      return presignUrl;
     } catch (error) {
       console.error(error);
       throw new Error(`Failed to upload file to S3: ${error.message}`);

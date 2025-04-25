@@ -4,18 +4,26 @@ import { Candidate } from '../../../../entities/candidate.entity';
 import { Repository } from 'typeorm';
 import { CandidateNotFoundError } from '../error/candidate-not-found.error';
 import { AppDataSource } from '../../../../shared/app-data-source';
+import {
+  CandidateTracking,
+  ImageType,
+} from 'src/entities/candidate-tracking.entity';
+import { CandidateTrackingNotFoundError } from '../error/candidate-tracking-not-found.error';
+import { S3Service } from 'src/shared/modules/aws-s3/s3.service';
 
-type CandidateResponse = Candidate & {
-  overall: string;
-  totalTime: string;
-};
+type CandidateResponse = Candidate &
+  CandidateTracking & {
+    overall: string;
+    totalTime: string;
+  };
 
 Inject();
 
 export class GetCandidateByIdCommandHandler {
   constructor(
-    @InjectRepository(Candidate)
-    private candidateRepository: Repository<Candidate>,
+    @InjectRepository(CandidateTracking)
+    private candidateTrackingRepository: Repository<CandidateTracking>,
+    private s3Service: S3Service,
   ) {}
 
   public async execute(id: string) {
@@ -25,7 +33,48 @@ export class GetCandidateByIdCommandHandler {
       throw new CandidateNotFoundError();
     }
 
-    return candidate;
+    const candidateTracking = await this.candidateTrackingRepository.findOne({
+      where: {
+        candidate: {
+          id: candidate.id,
+        },
+      },
+    });
+
+    if (!candidateTracking) {
+      throw new CandidateTrackingNotFoundError();
+    }
+
+    if (candidateTracking.screenCaptureImages.length > 0) {
+      const processedScreenCaptureImages: ImageType[] = [];
+      for (const image of candidateTracking.screenCaptureImages) {
+        const presignUrl = await this.s3Service.getFileFromBucket(image.name);
+        processedScreenCaptureImages.push({
+          ...image,
+          name: presignUrl,
+        });
+      }
+      candidateTracking.screenCaptureImages = processedScreenCaptureImages;
+    }
+
+    if (candidateTracking.webcamCaptureImages.length > 0) {
+      const processedWebcamCaptureImages: ImageType[] = [];
+      for (const image of candidateTracking.webcamCaptureImages) {
+        const presignUrl = await this.s3Service.getFileFromBucket(image.name);
+        processedWebcamCaptureImages.push({
+          ...image,
+          name: presignUrl,
+        });
+      }
+      candidateTracking.screenCaptureImages = processedWebcamCaptureImages;
+    }
+
+    return {
+      ...candidate,
+      candidateTracking: {
+        ...candidateTracking,
+      },
+    };
   }
 
   private async findCandidateById(id: string): Promise<CandidateResponse> {
@@ -48,22 +97,11 @@ export class GetCandidateByIdCommandHandler {
                                'name', a.name,
                                'jobRole', a.job_role
                        ), '{}'
-               )                                                               AS "assessment",
-               COALESCE(
-                       JSON_BUILD_OBJECT(
-                                'id', ct.id,
-                               'isFullScreenExited', ct.is_full_screen_exited,
-                               'isDevToolsOpened', ct.is_dev_tools_opened,
-                               'tabChangeCount', ct.tab_change_count,
-                               'screenCaptureImages', ct.screen_capture_images,
-                               'webcamCaptureImages', ct.webcam_capture_images
-                       ), '{}'
-               )                                                               AS "candidateTracking"                                                                              
+               )                                                               AS "assessment"                                                                         
         FROM candidate c
                  LEFT JOIN assessment a ON c.assessment_id = a.id
-                 LEFT JOIN candidate_tracking ct ON ct.candidate_id = c.id
         WHERE c.id = '${id}'
-        GROUP BY c.id, a.id, a.name, a.job_role, ct.id, ct.is_full_screen_exited, ct.is_dev_tools_opened, ct.tab_change_count, ct.screen_capture_images, ct.webcam_capture_images;
+        GROUP BY c.id, a.id, a.name, a.job_role;
     `;
 
     const data: CandidateResponse[] = await AppDataSource.query(query);

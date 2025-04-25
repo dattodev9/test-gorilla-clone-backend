@@ -25,6 +25,7 @@ import { CodingQuestion } from '../../entities/coding-question.entity';
 import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
 import { UpdateCandidateTrackingController } from './update-candidate-tracking/controller/update-candidate-tracking.controller';
 import { UpdateCandidateTrackingCommandHandler } from './update-candidate-tracking/command/update-candidate-tracking.command-handler';
+import { S3Module } from 'src/shared/modules/aws-s3/s3.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { UpdateCandidateTrackingCommandHandler } from './update-candidate-tracki
       MultipleChoiceQuestion,
       CodingQuestion,
     ]),
+    S3Module,
   ],
   controllers: [
     CreateCandidateController,
