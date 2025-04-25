@@ -23,6 +23,8 @@ import { UpdateCandidateStatusCommandHandler } from './update-candidate-status/c
 import { UpdateCandidateStatusController } from './update-candidate-status/controller/update-candidate-status.controller';
 import { CodingQuestion } from '../../entities/coding-question.entity';
 import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
+import { UpdateCandidateTrackingController } from './update-candidate-tracking/controller/update-candidate-tracking.controller';
+import { UpdateCandidateTrackingCommandHandler } from './update-candidate-tracking/command/update-candidate-tracking.command-handler';
 
 @Module({
   imports: [
@@ -45,6 +47,7 @@ import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
     UpdateCandidateStatusController,
     SubmitAssessmentController,
     DeleteCandidateController,
+    UpdateCandidateTrackingController,
   ],
   providers: [
     CreateCandidateCommandHandler,
@@ -55,6 +58,7 @@ import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
     UpdateCandidateStatusCommandHandler,
     SubmitAssessmentCommandHandler,
     DeleteCandidateCommandHandler,
+    UpdateCandidateTrackingCommandHandler,
   ],
 })
 export class CandidateModule {}

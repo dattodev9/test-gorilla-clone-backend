@@ -2,7 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Candidate } from './candidate.entity';
@@ -45,6 +46,9 @@ export class CandidateTracking {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Candidate, (candidate) => candidate.candidateTrackings)
+  @OneToOne(() => Candidate, (candidate) => candidate.candidateTracking, {
+    nullable: true,
+  })
+  @JoinColumn()
   candidate: Candidate;
 }

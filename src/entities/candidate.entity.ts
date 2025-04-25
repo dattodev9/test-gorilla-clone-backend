@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Assessment } from './assessment.entity';
@@ -59,8 +59,8 @@ export class Candidate {
   @ManyToOne(() => Assessment, (assessment) => assessment.candidates)
   assessment: Assessment;
 
-  @OneToMany(() => CandidateTracking, (ct) => ct.candidate, {
-    onDelete: 'CASCADE',
+  @OneToOne(() => CandidateTracking, (ct) => ct.candidate, {
+    nullable: true,
   })
-  candidateTrackings: CandidateTracking[];
+  candidateTracking: CandidateTracking;
 }
