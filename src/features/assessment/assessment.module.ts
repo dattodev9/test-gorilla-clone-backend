@@ -15,6 +15,8 @@ import { GetCandidateByAssessmentIdController } from './get-candidate-by-assessm
 import { GetCandidateByAssessmentIdCommandHandler } from './get-candidate-by-assessment-id/command/get-candidate-by-assessment-id.command-handler';
 import { GetAssessmentViewByIdController } from './get-assessment-view-by-id/controller/get-assessment-view-by-id.controller';
 import { GetAssessmentViewByIdCommandHandler } from './get-assessment-view-by-id/command/get-assessment-view-by-id.command-handler';
+import { DuplicateAssessmentController } from './dupicate-assessment/controller/duplicate-assessment.controller';
+import { DuplicateAssessmentCommandHandler } from './dupicate-assessment/command/duplicate-assessment.command-handler';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Assessment, Test, Candidate])],
@@ -25,6 +27,7 @@ import { GetAssessmentViewByIdCommandHandler } from './get-assessment-view-by-id
     GetCandidateByAssessmentIdController,
     GetAssessmentViewByIdController,
     UpdateAssessmentController,
+    DuplicateAssessmentController,
   ],
   providers: [
     CreateAssessmentCommandHandler,
@@ -33,6 +36,7 @@ import { GetAssessmentViewByIdCommandHandler } from './get-assessment-view-by-id
     GetCandidateByAssessmentIdCommandHandler,
     GetAssessmentViewByIdCommandHandler,
     UpdateAssessmentCommandHandler,
+    DuplicateAssessmentCommandHandler,
   ],
 })
 export class AssessmentModule {}
