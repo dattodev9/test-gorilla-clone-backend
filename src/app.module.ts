@@ -24,8 +24,10 @@ import { AppService } from './app.service';
 const publicRoutes = [
   { path: '/sign-in', method: RequestMethod.POST },
   { path: '/candidate/:id/submit-assessment', method: RequestMethod.POST },
+  { path: '/candidate/:id/assessment', method: RequestMethod.GET },
   { path: '/candidate/:id/assessment-overview', method: RequestMethod.GET },
   { path: '/candidate/:id/tracking', method: RequestMethod.PATCH },
+  { path: '/coding-question/:id/run', method: RequestMethod.POST },
 ];
 
 const adminAndHRRoutes = [
@@ -38,7 +40,6 @@ const adminAndHRRoutes = [
   { path: '/test', method: RequestMethod.ALL },
   { path: '/candidate', method: RequestMethod.ALL },
   { path: '/candidate/:id', method: RequestMethod.ALL },
-  { path: '/candidate/:id/assessment', method: RequestMethod.GET },
 ];
 
 const adminAndSpecialistRoutes = [

@@ -66,7 +66,7 @@ export class GetCandidateByIdCommandHandler {
           name: presignUrl,
         });
       }
-      candidateTracking.screenCaptureImages = processedWebcamCaptureImages;
+      candidateTracking.webcamCaptureImages = processedWebcamCaptureImages;
     }
 
     return {

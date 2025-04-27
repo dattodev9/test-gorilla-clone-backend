@@ -10,6 +10,7 @@ import { removeUndefinedAttribute } from 'src/shared/remove-undefined-attribute'
 import { S3Service } from 'src/shared/modules/aws-s3/s3.service';
 
 const CANDIDATE_TRACKING_FOLDER = '/candidate-tracking';
+
 export class UpdateCandidateTrackingCommandHandler {
   constructor(
     @InjectRepository(CandidateTracking)
@@ -35,6 +36,7 @@ export class UpdateCandidateTrackingCommandHandler {
 
     const uploadedScreenImageKeys: ImageType[] = [];
     const uploadedWebcamImageKeys: ImageType[] = [];
+
     if (processedCommand.screenCaptureImages) {
       for (const file of processedCommand.screenCaptureImages) {
         const key = await this.s3Service.uploadFileToBucket(
@@ -61,16 +63,32 @@ export class UpdateCandidateTrackingCommandHandler {
       }
     }
 
-    await this.candidateTrackingRepository.update(candidateTracking.id, {
-      ...processedCommand,
+    const updatePayload: Partial<CandidateTracking> = {
       screenCaptureImages: [
-        ...candidateTracking.screenCaptureImages,
+        ...(candidateTracking.screenCaptureImages || []),
         ...uploadedScreenImageKeys,
       ],
       webcamCaptureImages: [
-        ...candidateTracking.webcamCaptureImages,
+        ...(candidateTracking.webcamCaptureImages || []),
         ...uploadedWebcamImageKeys,
       ],
-    });
+    };
+
+    if (processedCommand.isDevToolsOpened !== undefined) {
+      updatePayload.isDevToolsOpened =
+        processedCommand.isDevToolsOpened === 'true';
+    }
+    if (processedCommand.isFullScreenExited !== undefined) {
+      updatePayload.isFullScreenExited =
+        processedCommand.isFullScreenExited === 'true';
+    }
+    if (processedCommand.tabChangeCount !== undefined) {
+      updatePayload.tabChangeCount = Number(processedCommand.tabChangeCount);
+    }
+
+    await this.candidateTrackingRepository.update(
+      candidateTracking.id,
+      updatePayload,
+    );
   }
 }

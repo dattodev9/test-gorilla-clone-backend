@@ -1,17 +1,22 @@
-import { IsArray, IsBoolean, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsArray,
+  IsBooleanString,
+  IsNumberString,
+  IsOptional,
+} from 'class-validator';
 
 export class UpdateCandidateTrackingRequestDto {
   @IsOptional()
-  @IsBoolean()
-  isFullScreenExited?: boolean;
+  @IsBooleanString()
+  isFullScreenExited?: string;
 
   @IsOptional()
-  @IsBoolean()
-  isDevToolsOpened?: boolean;
+  @IsBooleanString()
+  isDevToolsOpened?: string;
 
   @IsOptional()
-  @IsNumber()
-  tabChangeCount?: number;
+  @IsNumberString()
+  tabChangeCount?: string;
 
   @IsOptional()
   @IsArray()

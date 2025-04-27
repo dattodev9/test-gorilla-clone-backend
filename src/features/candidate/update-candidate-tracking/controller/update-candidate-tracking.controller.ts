@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UpdateCandidateTrackingCommandHandler } from '../command/update-candidate-tracking.command-handler';
-import { UpdateCandidateTrackingCommand } from '../command/update-candidate-tracking.command';
 import { CandidateTrackingNotFoundError } from '../error/candidate-tracking-not-found.error';
+import { UpdateCandidateTrackingRequestDto } from './update-candidate-tracking-request.dto';
 
 @Controller('/candidate/:id/tracking')
 export class UpdateCandidateTrackingController {
@@ -26,7 +26,7 @@ export class UpdateCandidateTrackingController {
   )
   public async updateCandidateTracking(
     @Param('id') id: string,
-    @Body() command: UpdateCandidateTrackingCommand,
+    @Body() request: UpdateCandidateTrackingRequestDto,
     @UploadedFiles()
     files: {
       screenCaptureImages?: Express.Multer.File[];
@@ -35,13 +35,13 @@ export class UpdateCandidateTrackingController {
   ) {
     try {
       if (files.screenCaptureImages) {
-        command.screenCaptureImages = files.screenCaptureImages;
+        request.screenCaptureImages = files.screenCaptureImages;
       }
       if (files.webcamCaptureImages) {
-        command.webcamCaptureImages = files.webcamCaptureImages;
+        request.webcamCaptureImages = files.webcamCaptureImages;
       }
 
-      return await this.handler.execute(id, command);
+      return await this.handler.execute(id, request);
     } catch (error) {
       console.error(error);
 
