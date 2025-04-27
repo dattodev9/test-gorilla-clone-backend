@@ -17,6 +17,7 @@ export class DuplicateAssessmentCommandHandler {
       select: {
         id: false,
       },
+      relations: ['tests'],
     });
 
     if (!assessment) {
