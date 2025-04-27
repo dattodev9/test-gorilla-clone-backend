@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
-  Put,
+  Patch,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,7 +17,7 @@ import { CandidateTrackingNotFoundError } from '../error/candidate-tracking-not-
 export class UpdateCandidateTrackingController {
   constructor(private handler: UpdateCandidateTrackingCommandHandler) {}
 
-  @Put()
+  @Patch()
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'screenCaptureImages', maxCount: 500 },

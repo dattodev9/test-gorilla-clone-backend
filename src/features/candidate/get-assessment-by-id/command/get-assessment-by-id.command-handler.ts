@@ -58,15 +58,24 @@ export class GetAssessmentByIdCommandHandler {
       ...candidate,
       status: CandidateStatus.PROCESSING,
     });
-    console.log(candidate);
 
-    await this.candidateTrackingRepository.save(
-      this.candidateTrackingRepository.create({
+    const candidateTracking = await this.candidateTrackingRepository.findOne({
+      where: {
         candidate: {
-          ...candidate,
+          id: id,
         },
-      }),
-    );
+      },
+    });
+
+    if (!candidateTracking) {
+      await this.candidateTrackingRepository.save(
+        this.candidateTrackingRepository.create({
+          candidate: {
+            ...candidate,
+          },
+        }),
+      );
+    }
 
     return await this.getAssessmentById(id);
   }

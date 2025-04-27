@@ -63,8 +63,14 @@ export class UpdateCandidateTrackingCommandHandler {
 
     await this.candidateTrackingRepository.update(candidateTracking.id, {
       ...processedCommand,
-      screenCaptureImages: uploadedScreenImageKeys,
-      webcamCaptureImages: uploadedWebcamImageKeys,
+      screenCaptureImages: [
+        ...candidateTracking.screenCaptureImages,
+        ...uploadedScreenImageKeys,
+      ],
+      webcamCaptureImages: [
+        ...candidateTracking.webcamCaptureImages,
+        ...uploadedWebcamImageKeys,
+      ],
     });
   }
 }

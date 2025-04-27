@@ -25,6 +25,7 @@ const publicRoutes = [
   { path: '/sign-in', method: RequestMethod.POST },
   { path: '/candidate/:id/submit-assessment', method: RequestMethod.POST },
   { path: '/candidate/:id/assessment-overview', method: RequestMethod.GET },
+  { path: '/candidate/:id/tracking', method: RequestMethod.PATCH },
 ];
 
 const adminAndHRRoutes = [
@@ -52,6 +53,8 @@ const adminAndSpecialistRoutes = [
   { path: '/one-choice-question/:id', method: RequestMethod.ALL },
   { path: '/multiple-choice-question', method: RequestMethod.ALL },
   { path: '/multiple-choice-question/:id', method: RequestMethod.ALL },
+  { path: '/coding-question', method: RequestMethod.ALL },
+  { path: '/coding-question/:id', method: RequestMethod.ALL },
   { path: '/change-password', method: RequestMethod.POST },
 ];
 
