@@ -19,7 +19,7 @@ export class GetTestCommandHandler {
 
   public async execute(
     command: GetTestCommand,
-  ): Promise<PaginationResponseDto<Test>> {
+  ): Promise<PaginationResponseDto<TestResponse>> {
     const {
       page = 1,
       size = 10,
@@ -35,7 +35,7 @@ export class GetTestCommandHandler {
     const data = await this.findAllQuestions(
       skip,
       take,
-      camelToSnakeCase(sortBy),
+      sortBy,
       direction,
       name,
       status,
@@ -58,7 +58,7 @@ export class GetTestCommandHandler {
     direction: string,
     name?: string,
     status?: TestStatus[],
-  ) {
+  ): Promise<TestResponse[]> {
     const conditions: string[] = [];
 
     if (name) {
@@ -69,6 +69,14 @@ export class GetTestCommandHandler {
       conditions.push(
         `t.status IN (${status.map((s) => `'${s}'`).join(', ')})`,
       );
+    }
+
+    const ALIAS_COLUMNS = ['totalTime', 'totalQuestion'];
+    let orderBy: string;
+    if (ALIAS_COLUMNS.includes(sortBy)) {
+      orderBy = `"${sortBy}"`;
+    } else {
+      orderBy = `t.${camelToSnakeCase(sortBy)}`;
     }
 
     const whereClause =
@@ -97,7 +105,7 @@ export class GetTestCommandHandler {
                 WHERE cq.test_id = t.id) AS "totalQuestion"
         FROM test t
             ${whereClause}
-        ORDER BY t.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
+        ORDER BY ${orderBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
         LIMIT ${take} OFFSET ${skip}
     `;
     const result: TestResponse[] = await AppDataSource.query(query);
@@ -121,11 +129,10 @@ export class GetTestCommandHandler {
       conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     const query = `
-            SELECT 
-            COUNT(*)
-            FROM test t
+        SELECT COUNT(*)
+        FROM test t
             ${whereClause}
-        `;
+    `;
     const result: { count: string }[] = await AppDataSource.query(query);
     return Number(result[0].count);
   }

@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   Candidate,
@@ -8,15 +7,6 @@ import { Repository } from 'typeorm';
 import { GetCandidateCommand } from './get-candidate.command';
 import { camelToSnakeCase } from '../../../../shared/camel-to-snake-case';
 import { AppDataSource } from '../../../../shared/app-data-source';
-import { PaginationResponseDto } from '../../../../common/pagination/pagination-response-dto';
-
-class CandidateResponse extends PaginationResponseDto<
-  Candidate & {
-    overall: string;
-  }
-> {}
-
-Inject();
 
 export class GetCandidateCommandHandler {
   constructor(
@@ -39,7 +29,7 @@ export class GetCandidateCommandHandler {
     const data = await this.findCandidate(
       (page ?? 1) - 1,
       size,
-      camelToSnakeCase(sortBy),
+      sortBy,
       direction,
       name,
       status,
@@ -67,11 +57,20 @@ export class GetCandidateCommandHandler {
     status?: CandidateStatus[],
     overallMin?: number,
     overallMax?: number,
-  ): Promise<CandidateResponse> {
+  ): Promise<Candidate[]> {
     const conditions: string[] = [];
 
     if (name) {
       conditions.push(`c.name ILIKE '%${name}%'`);
+    }
+
+    const ALIAS_COLUMNS = ['overall'];
+
+    let orderBy: string;
+    if (ALIAS_COLUMNS.includes(sortBy)) {
+      orderBy = `"${sortBy}"`;
+    } else {
+      orderBy = `c.${camelToSnakeCase(sortBy)}`;
     }
 
     if (Array.isArray(status) && status.length > 0) {
@@ -80,12 +79,14 @@ export class GetCandidateCommandHandler {
       );
     }
 
-    if (overallMin) {
-      conditions.push(`(c.done_tests->>'overall')::float >= ${overallMin}`);
+    if (overallMin !== undefined) {
+      conditions.push(`COALESCE((SELECT AVG((value ->> 'overall')::float)
+        FROM jsonb_array_elements(c.done_tests) AS value), 0) >= ${overallMin}`);
     }
 
-    if (overallMax) {
-      conditions.push(`(c.done_tests->>'overall')::float <= ${overallMin}`);
+    if (overallMax !== undefined) {
+      conditions.push(`COALESCE((SELECT AVG((value ->> 'overall')::float)
+        FROM jsonb_array_elements(c.done_tests) AS value), 0) <= ${overallMax}`);
     }
 
     const whereClause =
@@ -101,7 +102,7 @@ export class GetCandidateCommandHandler {
                c.created_at                                                    AS "createdAt"
         FROM candidate c
             ${whereClause}
-        ORDER BY c.${sortBy} ${direction}
+        ORDER BY ${orderBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
         LIMIT ${take} OFFSET ${skip}
     `;
 
@@ -126,12 +127,14 @@ export class GetCandidateCommandHandler {
       );
     }
 
-    if (overallMin) {
-      conditions.push(`(c.done_tests->>'overall')::float >= ${overallMin}`);
+    if (overallMin !== undefined) {
+      conditions.push(`COALESCE((SELECT AVG((value ->> 'overall')::float)
+        FROM jsonb_array_elements(c.done_tests) AS value), 0) >= ${overallMin}`);
     }
 
-    if (overallMax) {
-      conditions.push(`(c.done_tests->>'overall')::float <= ${overallMin}`);
+    if (overallMax !== undefined) {
+      conditions.push(`COALESCE((SELECT AVG((value ->> 'overall')::float)
+        FROM jsonb_array_elements(c.done_tests) AS value), 0) <= ${overallMax}`);
     }
 
     const whereClause =

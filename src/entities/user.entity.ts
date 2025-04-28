@@ -44,5 +44,6 @@ export class User {
   hasChangedPassword: boolean;
 
   @CreateDateColumn()
+  @Expose()
   createdAt: Date;
 }

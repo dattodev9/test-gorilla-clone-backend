@@ -29,7 +29,7 @@ export class GetAssessmentCommandHandler {
     const data = await this.findAllAssessments(
       skip,
       size,
-      camelToSnakeCase(sortBy),
+      sortBy,
       direction,
       name,
       status,
@@ -53,6 +53,15 @@ export class GetAssessmentCommandHandler {
     name?: string,
     status?: AssessmentStatus[],
   ) {
+    const ALIAS_COLUMNS = ['totalCandidates', 'testCount'];
+
+    let orderBy: string;
+    if (ALIAS_COLUMNS.includes(sortBy)) {
+      orderBy = `"${sortBy}"`;
+    } else {
+      orderBy = `a.${camelToSnakeCase(sortBy)}`;
+    }
+
     const conditions: string[] = [];
 
     if (name) {
@@ -69,22 +78,21 @@ export class GetAssessmentCommandHandler {
       conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     const query = `
-        SELECT
-            a.id AS "id",
-            a.name AS "name",
-            a.job_role AS "jobRole",
-            a.created_at AS "createdAt",
-            a.status AS "status",
-            COUNT(DISTINCT c.id) AS "totalCandidates",
-            COUNT(DISTINCT CASE WHEN c.status = 'done' THEN c.id END) AS "doneCandidates",
-            COUNT(DISTINCT CASE WHEN c.status != 'done' THEN c.id END) AS "otherCandidates",
-            COUNT(DISTINCT at.test_id) AS "testCount"
+        SELECT a.id                                                       AS "id",
+               a.name                                                     AS "name",
+               a.job_role                                                 AS "jobRole",
+               a.created_at                                               AS "createdAt",
+               a.status                                                   AS "status",
+               COUNT(DISTINCT c.id)                                       AS "totalCandidates",
+               COUNT(DISTINCT CASE WHEN c.status = 'done' THEN c.id END)  AS "doneCandidates",
+               COUNT(DISTINCT CASE WHEN c.status != 'done' THEN c.id END) AS "otherCandidates",
+               COUNT(DISTINCT at.test_id)                                 AS "testCount"
         FROM assessment a
                  LEFT JOIN candidate c ON c.assessment_id = a.id
                  LEFT JOIN assessment_tests_test at ON at.assessment_id = a.id
             ${whereClause}
         GROUP BY a.id, a.name, a.job_role, a.created_at, a.status
-        ORDER BY a.${sortBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
+        ORDER BY ${orderBy} ${direction.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'}
         LIMIT ${take} OFFSET ${skip}
     `;
 
@@ -109,11 +117,10 @@ export class GetAssessmentCommandHandler {
       conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     const query = `
-                    SELECT 
-                    COUNT(*)
-                    FROM assessment a
-                    ${whereClause}
-                `;
+        SELECT COUNT(*)
+        FROM assessment a
+            ${whereClause}
+    `;
 
     const result: { count: string }[] = await AppDataSource.query(query);
     return Number(result[0].count);
