@@ -1,8 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  CandidateTracking,
-  ImageType,
-} from 'src/entities/candidate-tracking.entity';
+import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
 import { Repository } from 'typeorm';
 import { UpdateCandidateTrackingCommand } from './update-candidate-tracking.command';
 import { CandidateTrackingNotFoundError } from '../error/candidate-tracking-not-found.error';
@@ -33,33 +30,35 @@ export class UpdateCandidateTrackingCommandHandler {
     }
 
     const processedCommand = removeUndefinedAttribute(command);
-    const uploadedScreenImageKeys: ImageType[] = [];
-    const uploadedWebcamImageKeys: ImageType[] = [];
 
-    if (processedCommand.screenCaptureImages) {
-      for (const file of processedCommand.screenCaptureImages) {
-        const key = await this.s3Service.uploadFileToBucket(
-          file,
-          `${CANDIDATE_TRACKING_FOLDER}/screen-capture-images`,
-        );
-        uploadedScreenImageKeys.push({
-          name: key,
-          order: uploadedScreenImageKeys.length + 1,
-        });
-      }
+    let uploadedScreenImageKeys: string[] = [];
+    if (
+      processedCommand.screenCaptureImages &&
+      processedCommand.screenCaptureImages.length
+    ) {
+      uploadedScreenImageKeys = await Promise.all(
+        processedCommand.screenCaptureImages.map(async (file) => {
+          return await this.s3Service.uploadFileToBucket(
+            file,
+            `${CANDIDATE_TRACKING_FOLDER}/screen-capture-images`,
+          );
+        }),
+      );
     }
 
-    if (processedCommand.webcamCaptureImages) {
-      for (const file of processedCommand.webcamCaptureImages) {
-        const key = await this.s3Service.uploadFileToBucket(
-          file,
-          `${CANDIDATE_TRACKING_FOLDER}/webcam-capture-images`,
-        );
-        uploadedWebcamImageKeys.push({
-          name: key,
-          order: uploadedWebcamImageKeys.length + 1,
-        });
-      }
+    let uploadedWebcamImageKeys: string[] = [];
+    if (
+      processedCommand.webcamCaptureImages &&
+      processedCommand.webcamCaptureImages.length
+    ) {
+      uploadedWebcamImageKeys = await Promise.all(
+        processedCommand.webcamCaptureImages.map(async (file) => {
+          return await this.s3Service.uploadFileToBucket(
+            file,
+            `${CANDIDATE_TRACKING_FOLDER}/webcam-capture-images`,
+          );
+        }),
+      );
     }
 
     const updatePayload: Partial<CandidateTracking> = {
@@ -84,6 +83,8 @@ export class UpdateCandidateTrackingCommandHandler {
     if (processedCommand.tabChangeCount !== undefined) {
       updatePayload.tabChangeCount = Number(processedCommand.tabChangeCount);
     }
+
+    console.log(updatePayload);
 
     await this.candidateTrackingRepository.update(
       candidateTracking.id,

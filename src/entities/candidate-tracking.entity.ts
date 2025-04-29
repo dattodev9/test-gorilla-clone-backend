@@ -8,11 +8,6 @@ import {
 } from 'typeorm';
 import { Candidate } from './candidate.entity';
 
-export type ImageType = {
-  name: string;
-  order: number;
-};
-
 @Entity()
 export class CandidateTracking {
   @PrimaryGeneratedColumn('uuid')
@@ -33,7 +28,7 @@ export class CandidateTracking {
     default: () => "'[]'",
     nullable: false,
   })
-  public screenCaptureImages: Array<ImageType>;
+  public screenCaptureImages: Array<string>;
 
   @Column({
     type: 'jsonb',
@@ -41,7 +36,7 @@ export class CandidateTracking {
     default: () => "'[]'",
     nullable: false,
   })
-  public webcamCaptureImages: Array<ImageType>;
+  public webcamCaptureImages: Array<string>;
 
   @CreateDateColumn()
   createdAt: Date;

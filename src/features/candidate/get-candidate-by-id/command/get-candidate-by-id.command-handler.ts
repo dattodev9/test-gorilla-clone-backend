@@ -4,10 +4,7 @@ import { Candidate } from '../../../../entities/candidate.entity';
 import { Repository } from 'typeorm';
 import { CandidateNotFoundError } from '../error/candidate-not-found.error';
 import { AppDataSource } from '../../../../shared/app-data-source';
-import {
-  CandidateTracking,
-  ImageType,
-} from 'src/entities/candidate-tracking.entity';
+import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
 import { CandidateTrackingNotFoundError } from '../error/candidate-tracking-not-found.error';
 import { S3Service } from 'src/shared/modules/aws-s3/s3.service';
 
@@ -46,25 +43,19 @@ export class GetCandidateByIdCommandHandler {
     }
 
     if (candidateTracking.screenCaptureImages.length > 0) {
-      const processedScreenCaptureImages: ImageType[] = [];
+      const processedScreenCaptureImages: string[] = [];
       for (const image of candidateTracking.screenCaptureImages) {
-        const presignUrl = await this.s3Service.getFileFromBucket(image.name);
-        processedScreenCaptureImages.push({
-          ...image,
-          name: presignUrl,
-        });
+        const presignUrl = await this.s3Service.getFileFromBucket(image);
+        processedScreenCaptureImages.push(presignUrl);
       }
       candidateTracking.screenCaptureImages = processedScreenCaptureImages;
     }
 
     if (candidateTracking.webcamCaptureImages.length > 0) {
-      const processedWebcamCaptureImages: ImageType[] = [];
+      const processedWebcamCaptureImages: string[] = [];
       for (const image of candidateTracking.webcamCaptureImages) {
-        const presignUrl = await this.s3Service.getFileFromBucket(image.name);
-        processedWebcamCaptureImages.push({
-          ...image,
-          name: presignUrl,
-        });
+        const presignUrl = await this.s3Service.getFileFromBucket(image);
+        processedWebcamCaptureImages.push(presignUrl);
       }
       candidateTracking.webcamCaptureImages = processedWebcamCaptureImages;
     }
@@ -84,7 +75,7 @@ export class GetCandidateByIdCommandHandler {
                c.email                                                         AS "email",
                COALESCE((SELECT AVG((value ->> 'overall')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "overall",
-                                        COALESCE((SELECT SUM((value ->> 'time')::float)
+               COALESCE((SELECT SUM((value ->> 'time')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalTakeTime",
                COALESCE((SELECT SUM((value ->> 'totalTime')::float)
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalAssessmentTime",
@@ -97,7 +88,7 @@ export class GetCandidateByIdCommandHandler {
                                'name', a.name,
                                'jobRole', a.job_role
                        ), '{}'
-               )                                                               AS "assessment"                                                                         
+               )                                                               AS "assessment"
         FROM candidate c
                  LEFT JOIN assessment a ON c.assessment_id = a.id
         WHERE c.id = '${id}'
