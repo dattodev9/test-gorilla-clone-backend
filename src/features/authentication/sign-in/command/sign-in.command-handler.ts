@@ -69,13 +69,15 @@ export class SignInCommandHandler {
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'none',
+      secure: true,
       path: '/',
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'none',
+      secure: true,
       path: '/',
     });
 
