@@ -33,7 +33,6 @@ export class UpdateCandidateTrackingCommandHandler {
     }
 
     const processedCommand = removeUndefinedAttribute(command);
-
     const uploadedScreenImageKeys: ImageType[] = [];
     const uploadedWebcamImageKeys: ImageType[] = [];
 

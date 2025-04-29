@@ -10,7 +10,6 @@ import { AssessmentStatus } from 'src/entities/assessment.entity';
 import { CodingQuestion } from '../../../../entities/coding-question.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
 import { CandidateNotFoundError } from '../error/candidate-not-found.error';
 
 export type QuestionList = Pick<
@@ -39,8 +38,6 @@ export class GetAssessmentByIdCommandHandler {
   constructor(
     @InjectRepository(Candidate)
     private candidateRepository: Repository<Candidate>,
-    @InjectRepository(CandidateTracking)
-    private candidateTrackingRepository: Repository<CandidateTracking>,
   ) {}
 
   public async execute(id: string) {
@@ -58,24 +55,6 @@ export class GetAssessmentByIdCommandHandler {
       ...candidate,
       status: CandidateStatus.PROCESSING,
     });
-
-    const candidateTracking = await this.candidateTrackingRepository.findOne({
-      where: {
-        candidate: {
-          id: id,
-        },
-      },
-    });
-
-    if (!candidateTracking) {
-      await this.candidateTrackingRepository.save(
-        this.candidateTrackingRepository.create({
-          candidate: {
-            ...candidate,
-          },
-        }),
-      );
-    }
 
     return await this.getAssessmentById(id);
   }

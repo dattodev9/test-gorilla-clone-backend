@@ -9,6 +9,9 @@ import {
   AssessmentStatus,
 } from '../../../../entities/assessment.entity';
 import { Test } from '../../../../entities/test.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CandidateTracking } from '../../../../entities/candidate-tracking.entity';
+import { Repository } from 'typeorm';
 
 type TestAssessmentOverviewById = Pick<Test, 'name'> & {
   totalQuestions: string;
@@ -23,9 +26,30 @@ export type AssessmentOverviewById = Pick<Candidate, 'name' | 'email'> &
 Inject();
 
 export class GetAssessmentOverviewByIdCommandHandler {
-  constructor() {}
+  constructor(
+    @InjectRepository(CandidateTracking)
+    private candidateTrackingRepository: Repository<CandidateTracking>,
+  ) {}
 
   public async execute(id: string) {
+    const candidateTracking = await this.candidateTrackingRepository.findOne({
+      where: {
+        candidate: {
+          id: id,
+        },
+      },
+    });
+
+    if (!candidateTracking) {
+      await this.candidateTrackingRepository.save(
+        this.candidateTrackingRepository.create({
+          candidate: {
+            id: id,
+          },
+        }),
+      );
+    }
+
     return await this.getCandidateAndAssessmentById(id);
   }
 
