@@ -7,8 +7,8 @@ import {
   Patch,
 } from '@nestjs/common';
 import { UpdateTestCommandHandler } from '../command/update-test.command-handler';
-import { UpdateTestCommand } from '../command/update-test.command';
 import { TestNotFoundError } from '../error/test-not-found.error';
+import { UpdateTestRequestDto } from './update-test-request.dto';
 
 @Controller('/test')
 export class UpdateTestController {
@@ -17,7 +17,7 @@ export class UpdateTestController {
   @Patch(':id')
   public async updateTest(
     @Param('id') id: string,
-    @Body() command: UpdateTestCommand,
+    @Body() command: UpdateTestRequestDto,
   ) {
     try {
       return await this.handler.execute(id, command);

@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { CandidateNotFoundError } from '../error/candidate-not-found.error';
 import { AppDataSource } from '../../../../shared/app-data-source';
 import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
-import { CandidateTrackingNotFoundError } from '../error/candidate-tracking-not-found.error';
 import { S3Service } from 'src/shared/modules/aws-s3/s3.service';
 
 type CandidateResponse = Candidate &
@@ -38,32 +37,30 @@ export class GetCandidateByIdCommandHandler {
       },
     });
 
-    if (!candidateTracking) {
-      throw new CandidateTrackingNotFoundError();
-    }
-
-    if (candidateTracking.screenCaptureImages.length > 0) {
-      const processedScreenCaptureImages: string[] = [];
-      for (const image of candidateTracking.screenCaptureImages) {
-        const presignUrl = await this.s3Service.getFileFromBucket(image);
-        processedScreenCaptureImages.push(presignUrl);
+    if (candidateTracking) {
+      if (candidateTracking.screenCaptureImages.length > 0) {
+        const processedScreenCaptureImages: string[] = [];
+        for (const image of candidateTracking.screenCaptureImages) {
+          const presignUrl = await this.s3Service.getFileFromBucket(image);
+          processedScreenCaptureImages.push(presignUrl);
+        }
+        candidateTracking.screenCaptureImages = processedScreenCaptureImages;
       }
-      candidateTracking.screenCaptureImages = processedScreenCaptureImages;
-    }
 
-    if (candidateTracking.webcamCaptureImages.length > 0) {
-      const processedWebcamCaptureImages: string[] = [];
-      for (const image of candidateTracking.webcamCaptureImages) {
-        const presignUrl = await this.s3Service.getFileFromBucket(image);
-        processedWebcamCaptureImages.push(presignUrl);
+      if (candidateTracking.webcamCaptureImages.length > 0) {
+        const processedWebcamCaptureImages: string[] = [];
+        for (const image of candidateTracking.webcamCaptureImages) {
+          const presignUrl = await this.s3Service.getFileFromBucket(image);
+          processedWebcamCaptureImages.push(presignUrl);
+        }
+        candidateTracking.webcamCaptureImages = processedWebcamCaptureImages;
       }
-      candidateTracking.webcamCaptureImages = processedWebcamCaptureImages;
     }
 
     return {
       ...candidate,
       candidateTracking: {
-        ...candidateTracking,
+        ...(candidateTracking || {}),
       },
     };
   }

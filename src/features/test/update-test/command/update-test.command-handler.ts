@@ -24,6 +24,7 @@ export class UpdateTestCommandHandler {
     if (!existTest) {
       throw new TestNotFoundError();
     }
+    console.log(command);
 
     const updateData: Partial<Test> = removeUndefinedAttribute<Test>(command);
 
