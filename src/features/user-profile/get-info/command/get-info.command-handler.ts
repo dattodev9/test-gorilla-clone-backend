@@ -18,6 +18,7 @@ export class GetInfoCommandHandler {
 
     const userInfo = await this.userRepository.findOne({
       select: {
+        id: true,
         username: true,
         name: true,
         role: true,
