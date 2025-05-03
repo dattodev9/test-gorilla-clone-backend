@@ -83,8 +83,14 @@ export class UpdateCandidateTrackingCommandHandler {
     if (processedCommand.tabChangeCount !== undefined) {
       updatePayload.tabChangeCount = Number(processedCommand.tabChangeCount);
     }
-
-    console.log(updatePayload);
+    if (processedCommand.isAllowWebcamCapturePermission !== undefined) {
+      updatePayload.isAllowWebcamCapturePermission =
+        processedCommand.isAllowWebcamCapturePermission === 'true';
+    }
+    if (processedCommand.isAllowScreenCapturePermission !== undefined) {
+      updatePayload.isAllowScreenCapturePermission =
+        processedCommand.isAllowScreenCapturePermission === 'true';
+    }
 
     await this.candidateTrackingRepository.update(
       candidateTracking.id,

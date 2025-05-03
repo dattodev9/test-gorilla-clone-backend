@@ -78,6 +78,7 @@ export class GetCandidateByIdCommandHandler {
                          FROM jsonb_array_elements(c.done_tests) AS value), 0) AS "totalAssessmentTime",
                c.done_tests                                                    AS "doneTests",
                c.status                                                        AS "status",
+               c.take_date                                                     AS "takeDate",
                c.created_at                                                    AS "createdAt",
                COALESCE(
                        JSON_BUILD_OBJECT(

@@ -19,6 +19,14 @@ export class UpdateCandidateTrackingRequestDto {
   tabChangeCount?: string;
 
   @IsOptional()
+  @IsBooleanString()
+  isAllowScreenCapturePermission?: string;
+
+  @IsOptional()
+  @IsBooleanString()
+  isAllowWebcamCapturePermission?: string;
+
+  @IsOptional()
   @IsArray()
   screenCaptureImages?: Express.Multer.File[];
 

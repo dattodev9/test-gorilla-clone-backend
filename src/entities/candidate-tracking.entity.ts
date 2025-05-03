@@ -22,6 +22,12 @@ export class CandidateTracking {
   @Column({ default: 0 })
   tabChangeCount: number;
 
+  @Column({ default: false })
+  isAllowScreenCapturePermission: boolean;
+
+  @Column({ default: false })
+  isAllowWebcamCapturePermission: boolean;
+
   @Column({
     type: 'jsonb',
     array: false,
@@ -43,6 +49,7 @@ export class CandidateTracking {
 
   @OneToOne(() => Candidate, (candidate) => candidate.candidateTracking, {
     nullable: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   candidate: Candidate;
