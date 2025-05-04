@@ -33,7 +33,7 @@ export class Assessment {
   })
   status: AssessmentStatus;
 
-  @ManyToMany(() => Test)
+  @ManyToMany(() => Test, { onDelete: 'CASCADE' })
   @JoinTable()
   tests: Test[];
 

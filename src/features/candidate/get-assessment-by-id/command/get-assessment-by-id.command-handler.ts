@@ -86,8 +86,8 @@ export class GetAssessmentByIdCommandHandler {
                                    ocq.choices,
                                    ocq.time,
                                    ocq.order,
-                                   NULL::text                  AS "initial_code",
-                                   NULL::jsonb                 AS "test_cases",
+                                   NULL::text            AS "initial_code",
+                                   NULL::jsonb           AS "test_cases",
                                    ocq.test_id,
                                    'one-choice-question' AS type
                             FROM one_choice_question ocq
@@ -98,8 +98,8 @@ export class GetAssessmentByIdCommandHandler {
                                    mcq.choices,
                                    mcq.time,
                                    mcq.order,
-                                   NULL::text                  AS "initial_code",
-                                   NULL::jsonb                 AS "test_cases",
+                                   NULL::text                 AS "initial_code",
+                                   NULL::jsonb                AS "test_cases",
                                    mcq.test_id,
                                    'multiple-choice-question' AS type
                             FROM multiple_choice_question mcq

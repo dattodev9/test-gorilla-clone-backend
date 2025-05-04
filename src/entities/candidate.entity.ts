@@ -61,7 +61,6 @@ export class Candidate {
 
   @OneToOne(() => CandidateTracking, (ct) => ct.candidate, {
     nullable: true,
-    onDelete: 'CASCADE',
   })
   candidateTracking: CandidateTracking;
 }
