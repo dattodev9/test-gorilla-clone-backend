@@ -48,7 +48,7 @@ import { UpdateMultipleChoiceQuestionCommandHandler } from './multiple-choice-qu
 import { DeleteMultipleChoiceQuestionCommandHandler } from './multiple-choice-question/delete-multiple-choice-question/command/delete-multiple-choice-question.command-handler';
 import { UpdateMultipleChoiceQuestionController } from './multiple-choice-question/update-multiple-choice-question/controller/update-multiple-choice-question.controller';
 import { GetQuestionByIdController } from './get-question-by-test-id/controller/get-question-by-test-id.controller';
-import { GetQuestionByIdCommandHandler } from './get-question-by-test-id/command/get-question-by-id.command-handler';
+import { GetQuestionByTestIdCommandHandler } from './get-question-by-test-id/command/get-question-by-test-id.command-handler';
 import { GetQuestionImageCommandHandler } from './get-question-image/command/get-question-image.command-handler';
 import { UploadQuestionImageController } from './upload-question-image/controller/upload-question-image.controller';
 import { GetQuestionImageController } from './get-question-image/controller/get-question-image.controller';
@@ -116,7 +116,7 @@ import { RunCodingQuestionCommandHandler } from './coding-question/run-coding-qu
     CreateTestCommandHandler,
     GetTestCommandHandler,
     GetTestByIdCommandHandler,
-    GetQuestionByIdCommandHandler,
+    GetQuestionByTestIdCommandHandler,
     UpdateTestCommandHandler,
     DeleteTestCommandHandler,
 

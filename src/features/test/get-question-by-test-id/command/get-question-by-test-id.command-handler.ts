@@ -2,8 +2,9 @@ import { Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MultipleChoiceQuestion } from 'src/entities/multiple-choice-question.entity';
 import { OneChoiceQuestion } from 'src/entities/one-choice-question.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CodingQuestion } from '../../../../entities/coding-question.entity';
+import { GetQuestionByTestIdCommand } from './get-question-by-test-id.command';
 
 enum QuestionType {
   ONE_CHOICE_QUESTION = 'one-choice-question',
@@ -21,7 +22,7 @@ export type QuestionById = Partial<
 
 Inject();
 
-export class GetQuestionByIdCommandHandler {
+export class GetQuestionByTestIdCommandHandler {
   constructor(
     @InjectRepository(OneChoiceQuestion)
     private oneChoiceQuestionRepository: Repository<OneChoiceQuestion>,
@@ -31,12 +32,13 @@ export class GetQuestionByIdCommandHandler {
     private codingQuestionRepository: Repository<CodingQuestion>,
   ) {}
 
-  public async execute(testId: string) {
+  public async execute(testId: string, command: GetQuestionByTestIdCommand) {
     const oneChoiceQuestionData = await this.oneChoiceQuestionRepository.find({
       where: {
         test: {
           id: testId,
         },
+        ...(command.name && { name: Like(`%${command.name}%`) }),
       },
     });
 
@@ -46,6 +48,7 @@ export class GetQuestionByIdCommandHandler {
           test: {
             id: testId,
           },
+          ...(command.name && { name: Like(`%${command.name}%`) }),
         },
       });
 
@@ -54,6 +57,7 @@ export class GetQuestionByIdCommandHandler {
         test: {
           id: testId,
         },
+        ...(command.name && { name: Like(`%${command.name}%`) }),
       },
     });
 

@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 import { PaginationRequestDto } from 'src/common/pagination/pagination-request-dto';
 import { AssessmentStatus } from 'src/entities/assessment.entity';
 import { Transform } from 'class-transformer';
@@ -6,7 +6,7 @@ import { Transform } from 'class-transformer';
 export class GetAssessmentRequestDto extends PaginationRequestDto {
   @IsString()
   @IsOptional()
-  @Length(2, 100)
+  @MaxLength(100)
   name?: string;
 
   @IsEnum(AssessmentStatus, { each: true })
