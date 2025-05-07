@@ -3,7 +3,7 @@ import { Choice } from 'src/entities/one-choice-question.entity';
 export class CreateMultipleChoiceQuestionCommand {
   name: string;
 
-  content: string;
+  content?: string;
 
   choices: Choice[];
 

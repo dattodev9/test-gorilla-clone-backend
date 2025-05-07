@@ -2,6 +2,7 @@ import {
   ArrayMinSize,
   IsArray,
   IsNumber,
+  IsOptional,
   IsString,
   Length,
   Min,
@@ -14,7 +15,8 @@ export class CreateMultipleChoiceQuestionRequestDto {
   name: string;
 
   @IsString()
-  content: string;
+  @IsOptional()
+  content?: string;
 
   @IsArray()
   @ArrayMinSize(1)

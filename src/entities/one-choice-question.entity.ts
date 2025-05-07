@@ -14,7 +14,9 @@ export class OneChoiceQuestion {
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   content: string;
 
   @Column({

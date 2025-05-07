@@ -1,5 +1,12 @@
 import { TestCase } from '../../../../../entities/coding-question.entity';
-import { IsArray, IsNumber, IsString, Length, Min } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+  Min,
+} from 'class-validator';
 import { ArrayMinSize } from '@nestjs/class-validator';
 
 export class CreateCodingQuestionRequestDto {
@@ -8,7 +15,8 @@ export class CreateCodingQuestionRequestDto {
   name: string;
 
   @IsString()
-  content: string;
+  @IsOptional()
+  content?: string;
 
   @IsString()
   initialCode: string;

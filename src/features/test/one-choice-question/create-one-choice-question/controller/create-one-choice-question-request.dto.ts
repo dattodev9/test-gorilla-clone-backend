@@ -1,5 +1,12 @@
 import { ArrayMinSize } from '@nestjs/class-validator';
-import { IsArray, IsNumber, IsString, Length, Min } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+  Min,
+} from 'class-validator';
 import { Choice } from 'src/entities/one-choice-question.entity';
 
 export class CreateOneChoiceQuestionRequestDto {
@@ -8,7 +15,8 @@ export class CreateOneChoiceQuestionRequestDto {
   name: string;
 
   @IsString()
-  content: string;
+  @IsOptional()
+  content?: string;
 
   @IsArray()
   @ArrayMinSize(1)

@@ -3,7 +3,7 @@ import { TestCase } from '../../../../../entities/coding-question.entity';
 export class CreateOneChoiceQuestionCommand {
   name: string;
 
-  content: string;
+  content?: string;
 
   initialCode: string;
 

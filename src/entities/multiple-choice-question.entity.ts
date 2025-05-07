@@ -10,7 +10,9 @@ export class MultipleChoiceQuestion {
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   content: string;
 
   @Column({

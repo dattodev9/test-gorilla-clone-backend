@@ -15,7 +15,9 @@ export class CodingQuestion {
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   content: string;
 
   @Column({ type: 'text' })
