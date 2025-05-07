@@ -11,6 +11,7 @@ import { Response } from 'express';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { ConfigService } from '@nestjs/config';
+import { COOKIE_CONFIG } from 'src/configs/cookie.config';
 
 export class SignInCommandHandler {
   constructor(
@@ -67,19 +68,9 @@ export class SignInCommandHandler {
       86400 * 7,
     );
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      path: '/',
-    });
+    res.cookie('accessToken', accessToken, COOKIE_CONFIG);
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      path: '/',
-    });
+    res.cookie('refreshToken', refreshToken, COOKIE_CONFIG);
 
     return res.status(200).json({
       message: 'Sign in successful',
