@@ -199,6 +199,13 @@ export class SubmitAssessmentCommandHandler {
     const sandboxDir = path.join(process.cwd(), 'sandbox');
     await fs.mkdir(sandboxDir, { recursive: true });
 
+    const functionNameMatch = callSnippet.match(/^\s*(\w+)\s*\(/);
+    if (!functionNameMatch) {
+      throw new Error('Cannot extract function name from callSnippet');
+    }
+    const functionName = functionNameMatch[1];
+    code += `module.exports = ${functionName};`;
+
     await fs.writeFile(path.join(sandboxDir, 'solution.js'), code);
 
     const runnerCode = `

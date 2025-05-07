@@ -9,4 +9,4 @@ var findMedianSortedArrays = function(nums1, nums2) {
   // End code
 };
 
-module.exports = findMedianSortedArrays;
+module.exports = findMedianSortedArrays;module.exports = findMedianSortedArrays;
