@@ -1,4 +1,4 @@
-import { PaginationRequestDto } from '../../../../common/pagination/pagination-request-dto';
+import { PaginationRequestDto } from 'src/common/pagination/pagination-request-dto';
 import {
   IsEnum,
   IsNumber,
@@ -8,8 +8,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { CandidateStatus } from '../../../../entities/candidate.entity';
-import { Transform } from 'class-transformer';
+import { CandidateStatus } from 'src/entities/candidate.entity';
+import { Transform, Type } from 'class-transformer';
 
 export class GetCandidateByAssessmentIdRequestDto extends PaginationRequestDto {
   @IsString()
@@ -26,10 +26,12 @@ export class GetCandidateByAssessmentIdRequestDto extends PaginationRequestDto {
   @IsNumber()
   @IsOptional()
   @Min(1)
+  @Type(() => Number)
   overallMin?: number;
 
   @IsNumber()
   @IsOptional()
   @Max(100)
+  @Type(() => Number)
   overallMax?: number;
 }

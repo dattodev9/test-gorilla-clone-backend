@@ -4,7 +4,7 @@ import { OneChoiceQuestion } from 'src/entities/one-choice-question.entity';
 import { Repository } from 'typeorm';
 import { UpdateOneChoiceQuestionCommand } from './update-one-choice-question.command';
 import { OneChoiceQuestionNotFound } from '../error/one-choice-question-not-found.error';
-import { removeUndefinedAttribute } from '../../../../../shared/remove-undefined-attribute';
+import { removeUndefinedAttribute } from 'src/shared/remove-undefined-attribute';
 
 Inject();
 
