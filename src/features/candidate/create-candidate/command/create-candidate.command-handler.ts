@@ -8,6 +8,7 @@ import {
   AssessmentStatus,
 } from '../../../../entities/assessment.entity';
 import { AssessmentNotFoundError } from '../error/assessment-not-found.error';
+import { CandidateTracking } from 'src/entities/candidate-tracking.entity';
 
 Inject();
 
@@ -17,6 +18,8 @@ export class CreateCandidateCommandHandler {
     private candidateRepository: Repository<Candidate>,
     @InjectRepository(Assessment)
     private assessmentRepository: Repository<Assessment>,
+    @InjectRepository(CandidateTracking)
+    private candidateTrackingRepository: Repository<CandidateTracking>,
   ) {}
 
   public async execute(command: CreateCandidateCommand) {
@@ -34,9 +37,17 @@ export class CreateCandidateCommandHandler {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { assessmentId } = command;
 
-    return await this.candidateRepository.save({
+    const newCandidate = await this.candidateRepository.save({
       ...command,
       assessment: assessment,
     });
+
+    return await this.candidateTrackingRepository.save(
+      this.candidateTrackingRepository.create({
+        candidate: {
+          id: newCandidate.id,
+        },
+      }),
+    );
   }
 }

@@ -6,7 +6,7 @@ import { CandidateTrackingNotFoundError } from '../error/candidate-tracking-not-
 import { removeUndefinedAttribute } from 'src/shared/remove-undefined-attribute';
 import { S3Service } from 'src/shared/modules/aws-s3/s3.service';
 
-const CANDIDATE_TRACKING_FOLDER = '/candidate-tracking';
+const CANDIDATE_TRACKING_FOLDER = 'candidate-tracking';
 
 export class UpdateCandidateTrackingCommandHandler {
   constructor(
@@ -17,11 +17,7 @@ export class UpdateCandidateTrackingCommandHandler {
 
   public async execute(id: string, command: UpdateCandidateTrackingCommand) {
     const candidateTracking = await this.candidateTrackingRepository.findOne({
-      where: {
-        candidate: {
-          id,
-        },
-      },
+      where: { candidate: { id } },
       relations: ['candidate'],
     });
 
@@ -31,65 +27,74 @@ export class UpdateCandidateTrackingCommandHandler {
 
     const processedCommand = removeUndefinedAttribute(command);
 
-    let uploadedScreenImageKeys: string[] = [];
-    if (
-      processedCommand.screenCaptureImages &&
-      processedCommand.screenCaptureImages.length
-    ) {
-      uploadedScreenImageKeys = await Promise.all(
-        processedCommand.screenCaptureImages.map(async (file) => {
-          return await this.s3Service.uploadFileToBucket(
-            file,
-            `${CANDIDATE_TRACKING_FOLDER}/screen-capture-images`,
-          );
+    const uploadFiles = async (
+      files: Express.Multer.File[],
+      folder: string,
+    ): Promise<string[]> => {
+      return Promise.all(
+        files.map(async (file) => {
+          try {
+            return await this.s3Service.uploadFileToBucket(
+              file,
+              `${CANDIDATE_TRACKING_FOLDER}/${folder}`,
+            );
+          } catch (error) {
+            console.error(`Error uploading file to ${folder}:`, error);
+            return null;
+          }
         }),
-      );
-    }
-
-    let uploadedWebcamImageKeys: string[] = [];
-    if (
-      processedCommand.webcamCaptureImages &&
-      processedCommand.webcamCaptureImages.length
-    ) {
-      uploadedWebcamImageKeys = await Promise.all(
-        processedCommand.webcamCaptureImages.map(async (file) => {
-          return await this.s3Service.uploadFileToBucket(
-            file,
-            `${CANDIDATE_TRACKING_FOLDER}/webcam-capture-images`,
-          );
-        }),
-      );
-    }
-
-    const updatePayload: Partial<CandidateTracking> = {
-      screenCaptureImages: [
-        ...(candidateTracking.screenCaptureImages || []),
-        ...uploadedScreenImageKeys,
-      ],
-      webcamCaptureImages: [
-        ...(candidateTracking.webcamCaptureImages || []),
-        ...uploadedWebcamImageKeys,
-      ],
+      ).then((results) => results.filter((key) => key !== null));
     };
 
-    if (processedCommand.isDevToolsOpened !== undefined) {
-      updatePayload.isDevToolsOpened =
-        processedCommand.isDevToolsOpened === 'true';
-    }
-    if (processedCommand.isFullScreenExited !== undefined) {
-      updatePayload.isFullScreenExited =
-        processedCommand.isFullScreenExited === 'true';
-    }
-    if (processedCommand.tabChangeCount !== undefined) {
-      updatePayload.tabChangeCount = Number(processedCommand.tabChangeCount);
-    }
-    if (processedCommand.isAllowWebcamCapturePermission !== undefined) {
-      updatePayload.isAllowWebcamCapturePermission =
-        processedCommand.isAllowWebcamCapturePermission === 'true';
-    }
-    if (processedCommand.isAllowScreenCapturePermission !== undefined) {
-      updatePayload.isAllowScreenCapturePermission =
-        processedCommand.isAllowScreenCapturePermission === 'true';
+    const uploadedScreenImageKeys = processedCommand.screenCaptureImages?.length
+      ? await uploadFiles(
+          processedCommand.screenCaptureImages,
+          'screen-capture-images',
+        )
+      : [];
+
+    const uploadedWebcamImageKeys = processedCommand.webcamCaptureImages?.length
+      ? await uploadFiles(
+          processedCommand.webcamCaptureImages,
+          'webcam-capture-images',
+        )
+      : [];
+
+    const updatePayload: Partial<CandidateTracking> = {
+      ...(uploadedScreenImageKeys.length > 0 && {
+        screenCaptureImages: [
+          ...(candidateTracking.screenCaptureImages || []),
+          ...uploadedScreenImageKeys,
+        ],
+      }),
+      ...(uploadedWebcamImageKeys.length > 0 && {
+        webcamCaptureImages: [
+          ...(candidateTracking.webcamCaptureImages || []),
+          ...uploadedWebcamImageKeys,
+        ],
+      }),
+      ...(processedCommand.isDevToolsOpened !== undefined && {
+        isDevToolsOpened: processedCommand.isDevToolsOpened === 'true',
+      }),
+      ...(processedCommand.isFullScreenExited !== undefined && {
+        isFullScreenExited: processedCommand.isFullScreenExited === 'true',
+      }),
+      ...(processedCommand.tabChangeCount !== undefined && {
+        tabChangeCount: Number(processedCommand.tabChangeCount),
+      }),
+      ...(processedCommand.isAllowWebcamCapturePermission !== undefined && {
+        isAllowWebcamCapturePermission:
+          processedCommand.isAllowWebcamCapturePermission === 'true',
+      }),
+      ...(processedCommand.isAllowScreenCapturePermission !== undefined && {
+        isAllowScreenCapturePermission:
+          processedCommand.isAllowScreenCapturePermission === 'true',
+      }),
+    };
+
+    if (Object.keys(updatePayload).length === 0) {
+      console.warn('No updates to perform for candidate tracking.');
+      return;
     }
 
     await this.candidateTrackingRepository.update(
