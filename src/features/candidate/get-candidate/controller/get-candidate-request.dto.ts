@@ -9,7 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class GetCandidateRequestDto extends PaginationRequestDto {
   @IsString()
@@ -30,11 +30,13 @@ export class GetCandidateRequestDto extends PaginationRequestDto {
 
   @IsNumber()
   @IsOptional()
+  @Type(() => Number)
   @Min(1)
   overallMin?: number;
 
   @IsNumber()
   @IsOptional()
+  @Type(() => Number)
   @Max(100)
   overallMax?: number;
 }
