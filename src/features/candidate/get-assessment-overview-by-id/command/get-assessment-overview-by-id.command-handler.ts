@@ -1,14 +1,8 @@
 import { Inject } from '@nestjs/common';
-import { AppDataSource } from '../../../../shared/app-data-source';
-import {
-  Candidate,
-  CandidateStatus,
-} from '../../../../entities/candidate.entity';
-import {
-  Assessment,
-  AssessmentStatus,
-} from '../../../../entities/assessment.entity';
-import { Test } from '../../../../entities/test.entity';
+import { AppDataSource } from 'src/shared/app-data-source';
+import { Candidate, CandidateStatus } from 'src/entities/candidate.entity';
+import { Assessment, AssessmentStatus } from 'src/entities/assessment.entity';
+import { Test } from 'src/entities/test.entity';
 
 type TestAssessmentOverviewById = Pick<Test, 'name'> & {
   totalQuestions: string;
@@ -35,6 +29,7 @@ export class GetAssessmentOverviewByIdCommandHandler {
     const query = `
         SELECT c.name     AS "candidateName",
                c.email    AS "candidateEmail",
+               c.status   AS "candidateStatus",
                a.job_role AS "jobRole",
                COALESCE(
                                JSON_AGG(

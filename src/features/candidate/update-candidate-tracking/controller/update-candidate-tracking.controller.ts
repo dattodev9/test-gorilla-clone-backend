@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Post,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,10 +25,40 @@ export class UpdateCandidateTrackingController {
       { name: 'webcamCaptureImages', maxCount: 500 },
     ]),
   )
-  public async updateCandidateTracking(
+  public async patchCandidateTracking(
     @Param('id') id: string,
     @Body() request: UpdateCandidateTrackingRequestDto,
     @UploadedFiles()
+    files: {
+      screenCaptureImages?: Express.Multer.File[];
+      webcamCaptureImages?: Express.Multer.File[];
+    },
+  ) {
+    return this.handleUpdate(id, request, files);
+  }
+
+  @Post()
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'screenCaptureImages', maxCount: 500 },
+      { name: 'webcamCaptureImages', maxCount: 500 },
+    ]),
+  )
+  public async postCandidateTracking(
+    @Param('id') id: string,
+    @Body() request: UpdateCandidateTrackingRequestDto,
+    @UploadedFiles()
+    files: {
+      screenCaptureImages?: Express.Multer.File[];
+      webcamCaptureImages?: Express.Multer.File[];
+    },
+  ) {
+    return this.handleUpdate(id, request, files);
+  }
+
+  private async handleUpdate(
+    id: string,
+    request: UpdateCandidateTrackingRequestDto,
     files: {
       screenCaptureImages?: Express.Multer.File[];
       webcamCaptureImages?: Express.Multer.File[];

@@ -27,6 +27,10 @@ export class UpdateCandidateTrackingRequestDto {
   isAllowWebcamCapturePermission?: string;
 
   @IsOptional()
+  @IsBooleanString()
+  isExitedDuringAssessment: string;
+
+  @IsOptional()
   @IsArray()
   screenCaptureImages?: Express.Multer.File[];
 

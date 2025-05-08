@@ -1,16 +1,14 @@
 import { Inject } from '@nestjs/common';
-import { AppDataSource } from '../../../../shared/app-data-source';
-import { OneChoiceQuestion } from '../../../../entities/one-choice-question.entity';
-import {
-  Candidate,
-  CandidateStatus,
-} from '../../../../entities/candidate.entity';
-import { Test } from '../../../../entities/test.entity';
+import { AppDataSource } from 'src/shared/app-data-source';
+import { OneChoiceQuestion } from 'src/entities/one-choice-question.entity';
+import { Candidate, CandidateStatus } from 'src/entities/candidate.entity';
+import { Test } from 'src/entities/test.entity';
 import { AssessmentStatus } from 'src/entities/assessment.entity';
-import { CodingQuestion } from '../../../../entities/coding-question.entity';
+import { CodingQuestion } from 'src/entities/coding-question.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CandidateNotFoundError } from '../error/candidate-not-found.error';
+import { CandidateStatusInvalidError } from 'src/features/candidate/submit-assessment/error/candidate-status-invalid.error';
 
 export type QuestionList = Pick<
   OneChoiceQuestion,
@@ -51,6 +49,9 @@ export class GetAssessmentByIdCommandHandler {
       throw new CandidateNotFoundError();
     }
 
+    if (candidate.status !== CandidateStatus.ACTIVE) {
+      throw new CandidateStatusInvalidError();
+    }
     await this.candidateRepository.save({
       ...candidate,
       status: CandidateStatus.PROCESSING,

@@ -28,6 +28,9 @@ export class CandidateTracking {
   @Column({ default: false })
   isAllowWebcamCapturePermission: boolean;
 
+  @Column({ default: false })
+  isExitedDuringAssessment: boolean;
+
   @Column({
     type: 'jsonb',
     array: false,

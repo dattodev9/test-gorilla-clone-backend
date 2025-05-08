@@ -90,6 +90,10 @@ export class UpdateCandidateTrackingCommandHandler {
         isAllowScreenCapturePermission:
           processedCommand.isAllowScreenCapturePermission === 'true',
       }),
+      ...(processedCommand.isExitedDuringAssessment !== undefined && {
+        isExitedDuringAssessment:
+          processedCommand.isExitedDuringAssessment === 'true',
+      }),
     };
 
     if (Object.keys(updatePayload).length === 0) {
