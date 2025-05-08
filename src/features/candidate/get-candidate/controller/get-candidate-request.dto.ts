@@ -1,5 +1,5 @@
-import { PaginationRequestDto } from '../../../../common/pagination/pagination-request-dto';
-import { CandidateStatus } from '../../../../entities/candidate.entity';
+import { PaginationRequestDto } from 'src/common/pagination/pagination-request-dto';
+import { CandidateStatus } from 'src/entities/candidate.entity';
 import {
   IsEnum,
   IsNumber,
@@ -13,7 +13,6 @@ import { Transform, Type } from 'class-transformer';
 
 export class GetCandidateRequestDto extends PaginationRequestDto {
   @IsString()
-  @Length(2, 100)
   @IsOptional()
   name?: string;
 
