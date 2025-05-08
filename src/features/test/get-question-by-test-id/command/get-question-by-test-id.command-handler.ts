@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MultipleChoiceQuestion } from 'src/entities/multiple-choice-question.entity';
 import { OneChoiceQuestion } from 'src/entities/one-choice-question.entity';
 import { Like, Repository } from 'typeorm';
-import { CodingQuestion } from '../../../../entities/coding-question.entity';
+import { CodingQuestion } from 'src/entities/coding-question.entity';
 import { GetQuestionByTestIdCommand } from './get-question-by-test-id.command';
 
 enum QuestionType {
@@ -62,9 +62,15 @@ export class GetQuestionByTestIdCommandHandler {
     });
 
     return this.mergeAndSortArrayByOrder(
-      oneChoiceQuestionData,
-      multipleChoiceQuestionData,
-      codingQuestionData,
+      command.questionType?.includes(QuestionType.ONE_CHOICE_QUESTION)
+        ? oneChoiceQuestionData
+        : [],
+      command.questionType?.includes(QuestionType.MULTIPLE_CHOICE_QUESTION)
+        ? multipleChoiceQuestionData
+        : [],
+      command.questionType?.includes(QuestionType.CODING_QUESTION)
+        ? codingQuestionData
+        : [],
     );
   }
 
