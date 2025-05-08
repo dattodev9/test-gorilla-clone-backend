@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MultipleChoiceQuestion } from 'src/entities/multiple-choice-question.entity';
 import { OneChoiceQuestion } from 'src/entities/one-choice-question.entity';
-import { Like, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CodingQuestion } from 'src/entities/coding-question.entity';
 import { GetQuestionByTestIdCommand } from './get-question-by-test-id.command';
 
@@ -38,7 +38,7 @@ export class GetQuestionByTestIdCommandHandler {
         test: {
           id: testId,
         },
-        ...(command.name && { name: Like(`%${command.name}%`) }),
+        ...(command.name && { name: ILike(`%${command.name}%`) }),
       },
     });
 
@@ -48,7 +48,7 @@ export class GetQuestionByTestIdCommandHandler {
           test: {
             id: testId,
           },
-          ...(command.name && { name: Like(`%${command.name}%`) }),
+          ...(command.name && { name: ILike(`%${command.name}%`) }),
         },
       });
 
@@ -57,7 +57,7 @@ export class GetQuestionByTestIdCommandHandler {
         test: {
           id: testId,
         },
-        ...(command.name && { name: Like(`%${command.name}%`) }),
+        ...(command.name && { name: ILike(`%${command.name}%`) }),
       },
     });
 
