@@ -28,7 +28,7 @@ services:
     working_dir: /usr/src/app
     volumes:
       - ./sandbox:/usr/src/app
-    command: sh -c "npm install minimist && tail -f /dev/null"
+    command: tail -f /dev/null
 
 volumes:
   postgres_data:

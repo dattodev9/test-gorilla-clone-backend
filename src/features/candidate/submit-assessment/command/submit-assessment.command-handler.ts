@@ -14,10 +14,7 @@ import { CandidateStatusInvalidError } from '../error/candidate-status-invalid.e
 import { Test } from 'src/entities/test.entity';
 import { TestNotFoundError } from '../error/test-not-found.error';
 import { Assessment, AssessmentStatus } from 'src/entities/assessment.entity';
-import {
-  CodingQuestion,
-  TestCase,
-} from 'src/entities/coding-question.entity';
+import { CodingQuestion, TestCase } from 'src/entities/coding-question.entity';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { exec } from 'child_process';
@@ -37,6 +34,7 @@ export type RunCodingQuestion = {
   testCasePassed: number;
   totalTestCase: number;
 };
+
 export class SubmitAssessmentCommandHandler {
   constructor(
     @InjectRepository(Candidate)
@@ -196,172 +194,179 @@ export class SubmitAssessmentCommandHandler {
     testCases: TestCase[],
     callSnippet: string,
   ): Promise<RunCodingQuestion> {
-    const sandboxDir = path.join(process.cwd(), 'sandbox');
+    const sandboxBaseDir = path.join(process.cwd(), 'sandbox');
+    const uniqueId = crypto.randomUUID();
+    const sandboxDir = path.join(sandboxBaseDir, uniqueId);
     await fs.mkdir(sandboxDir, { recursive: true });
 
-    const functionNameMatch = callSnippet.match(/^\s*(\w+)\s*\(/);
-    if (!functionNameMatch) {
-      throw new Error('Cannot extract function name from callSnippet');
-    }
-    const functionName = functionNameMatch[1];
-    code += `module.exports = ${functionName};`;
+    try {
+      const functionNameMatch = callSnippet.match(/^\s*(\w+)\s*\(/);
+      if (!functionNameMatch) {
+        throw new Error('Cannot extract function name from callSnippet');
+      }
+      const functionName = functionNameMatch[1];
+      code += `module.exports = ${functionName};`;
 
-    await fs.writeFile(path.join(sandboxDir, 'solution.js'), code);
+      await fs.writeFile(path.join(sandboxDir, 'solution.js'), code);
 
-    const runnerCode = `
-          const fn = require('./solution');
-          const testCases = ${JSON.stringify(testCases)};
-          const callSnippet = ${JSON.stringify(callSnippet)};
-          let testCasePassed = 0;
-          let nearestFailedTestCase = {};
-          let check = false;
-          
-          function parseSingleArg(input) {
-            input = input.trim();
-            if ((input.startsWith('[') && input.endsWith(']')) ||
-                (input.startsWith('{') && input.endsWith('}')) ||
-                (input.startsWith('"') && input.endsWith('"')) ||
-                (input.startsWith("'") && input.endsWith("'"))) {
-              try {
-                return JSON.parse(input.replace(/'/g, '"'));
-              } catch {}
+      const runnerCode = `
+            const fn = require('./solution');
+            const testCases = ${JSON.stringify(testCases)};
+            const callSnippet = ${JSON.stringify(callSnippet)};
+            let testCasePassed = 0;
+            let nearestFailedTestCase = {};
+            let check = false;
+            
+            function parseSingleArg(input) {
+              input = input.trim();
+              if ((input.startsWith('[') && input.endsWith(']')) ||
+                  (input.startsWith('{') && input.endsWith('}')) ||
+                  (input.startsWith('"') && input.endsWith('"')) ||
+                  (input.startsWith("'") && input.endsWith("'"))) {
+                try {
+                  return JSON.parse(input.replace(/'/g, '"'));
+                } catch {}
+              }
+            
+              if (input === 'null') return null;
+              if (input === 'undefined') return undefined;
+              if (input === 'true') return true;
+              if (input === 'false') return false;
+            
+              if (!isNaN(input)) return Number(input);
+              return input;
             }
             
-            if (input === 'null') return null;
-            if (input === 'undefined') return undefined;
-            if (input === 'true') return true;
-            if (input === 'false') return false;
-
-            if (!isNaN(input)) return Number(input);
-            return input;
-          }
-          
-          function splitArgs(input) {
-            const result = [];
-            let current = '';
-            let bracket = 0, brace = 0, inQuotes = false, quoteType = '';
-            for (let i = 0; i < input.length; i++) {
-              const c = input[i];
-              if ((c === '"' || c === "'") && !inQuotes) {
-                inQuotes = true;
-                quoteType = c;
-                current += c;
-              } else if (inQuotes && c === quoteType) {
-                inQuotes = false;
-                current += c;
-              } else if (inQuotes) {
-                current += c;
-              } else if (c === '[') {
-                bracket++;
-                current += c;
-              } else if (c === ']') {
-                bracket--;
-                current += c;
-              } else if (c === '{') {
-                brace++;
-                current += c;
-              } else if (c === '}') {
-                brace--;
-                current += c;
-              } else if (c === ' ' && bracket === 0 && brace === 0) {
-                if (current.trim()) {
-                  result.push(current.trim());
-                  current = '';
+            function splitArgs(input) {
+              const result = [];
+              let current = '';
+              let bracket = 0, brace = 0, inQuotes = false, quoteType = '';
+              for (let i = 0; i < input.length; i++) {
+                const c = input[i];
+                if ((c === '"' || c === "'") && !inQuotes) {
+                  inQuotes = true;
+                  quoteType = c;
+                  current += c;
+                } else if (inQuotes && c === quoteType) {
+                  inQuotes = false;
+                  current += c;
+                } else if (inQuotes) {
+                  current += c;
+                } else if (c === '[') {
+                  bracket++;
+                  current += c;
+                } else if (c === ']') {
+                  bracket--;
+                  current += c;
+                } else if (c === '{') {
+                  brace++;
+                  current += c;
+                } else if (c === '}') {
+                  brace--;
+                  current += c;
+                } else if (c === ' ' && bracket === 0 && brace === 0) {
+                  if (current.trim()) {
+                    result.push(current.trim());
+                    current = '';
+                  }
+                } else {
+                  current += c;
                 }
-              } else {
-                current += c;
               }
+              if (current.trim()) result.push(current.trim());
+              return result;
             }
-            if (current.trim()) result.push(current.trim());
-            return result;
-          }
-          
-          for (let i = 0; i < testCases.length; i++) {
-            const { key, input, output } = testCases[i];
-            let actual;
-            try {
-
-              const argNames = callSnippet.match(/\\(([^)]*)\\)/)?.[1].split(',').map(s => s.trim()).filter(Boolean) || [];
-              let args;
-              if (argNames.length <= 1) {
-                args = [parseSingleArg(input)];
-              } else {
-                args = splitArgs(input).map(parseSingleArg);
-              }
-              actual = fn(...args);
-          
-              if (typeof actual === 'object' && actual !== null) {
-                actual = JSON.stringify(actual);
-              }
-              let expectedOutput = output;
+            
+            for (let i = 0; i < testCases.length; i++) {
+              const { key, input, output } = testCases[i];
+              let actual;
               try {
-                if ((output.startsWith('[') && output.endsWith(']')) ||
-                    (output.startsWith('{') && output.endsWith('}'))) {
-                  expectedOutput = JSON.stringify(JSON.parse(output));
+            
+                const argNames = callSnippet.match(/\\(([^)]*)\\)/)?.[1].split(',').map(s => s.trim()).filter(Boolean) || [];
+                let args;
+                if (argNames.length <= 1) {
+                  args = [parseSingleArg(input)];
+                } else {
+                  args = splitArgs(input).map(parseSingleArg);
                 }
-              } catch (e) {}
-          
-              const passed = actual?.toString() === expectedOutput?.toString();
-              if (!passed && !check) {
-                check = true;
-                nearestFailedTestCase = {
-                  key: key,
-                  input,
-                  expected: expectedOutput,
-                  actual: actual?.toString(),
+                actual = fn(...args);
+            
+                if (typeof actual === 'object' && actual !== null) {
+                  actual = JSON.stringify(actual);
                 }
+                let expectedOutput = output;
+                try {
+                  if ((output.startsWith('[') && output.endsWith(']')) ||
+                      (output.startsWith('{') && output.endsWith('}'))) {
+                    expectedOutput = JSON.stringify(JSON.parse(output));
+                  }
+                } catch (e) {}
+            
+                const passed = actual?.toString() === expectedOutput?.toString();
+                if (!passed && !check) {
+                  check = true;
+                  nearestFailedTestCase = {
+                    key: key,
+                    input,
+                    expected: expectedOutput,
+                    actual: actual?.toString(),
+                  }
+                }
+            
+                if (passed) {
+                  testCasePassed++;
+                }
+              } catch (e) {
+                console.log(JSON.stringify({
+                  nearestFailedTestCase,
+                  error: e.message,
+                  passed: false,
+                  testCasePassed: testCasePassed,
+                  totalTestCase: testCases.length,
+                }, null, 2));
+                process.exit(1);
               }
-          
-              if (passed) {
-                testCasePassed++;
-              }
-            } catch (e) {
-              console.log(JSON.stringify({
-                nearestFailedTestCase,
-                error: e.message,
-                passed: false,
-                testCasePassed: testCasePassed,
-                totalTestCase: testCases.length,
-              }, null, 2));
-              process.exit(1);
             }
-          }
-          
-          console.log(JSON.stringify({
-            nearestFailedTestCase,
-            error: "",
-            passed: !check,
-            testCasePassed: testCasePassed,
-            totalTestCase: testCases.length,
-          }, null, 2));
-          `;
-    await fs.writeFile(path.join(sandboxDir, 'runner.js'), runnerCode);
+            
+            console.log(JSON.stringify({
+              nearestFailedTestCase,
+              error: "",
+              passed: !check,
+              testCasePassed: testCasePassed,
+              totalTestCase: testCases.length,
+            }, null, 2));
+            `;
 
-    return new Promise((resolve, reject) => {
-      exec(
-        `docker exec test-golilla-clone-node-code-runner node runner.js`,
-        { cwd: sandboxDir },
-        (error, stdout, stderr) => {
-          if (error) {
+      await fs.writeFile(path.join(sandboxDir, 'runner.js'), runnerCode);
+
+      return await new Promise((resolve, reject) => {
+        exec(
+          `docker exec test-golilla-clone-node-code-runner node ${uniqueId}/runner.js`,
+          { cwd: sandboxDir },
+          (error, stdout, stderr) => {
+            if (error) {
+              try {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                const errResult = JSON.parse(stdout);
+                return resolve(errResult);
+              } catch {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+                return reject(stderr || 'Execution error');
+              }
+            }
             try {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              const errResult = JSON.parse(stdout);
-              return resolve(errResult);
+              const result = JSON.parse(stdout);
+              return resolve(result);
             } catch {
               // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-              return reject(stderr || 'Execution error');
+              return reject('Failed to parse result');
             }
-          }
-          try {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const result = JSON.parse(stdout);
-            return resolve(result);
-          } catch {
-            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-            return reject('Failed to parse result');
-          }
-        },
-      );
-    });
+          },
+        );
+      });
+    } finally {
+      await fs.rm(sandboxDir, { recursive: true, force: true });
+    }
   }
 }
