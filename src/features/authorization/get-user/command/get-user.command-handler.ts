@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../../../entities/user.entity';
-import { In, Repository, FindOptionsWhere } from 'typeorm';
+import { User } from 'src/entities/user.entity';
+import { In, Repository, FindOptionsWhere, ILike } from 'typeorm';
 import { GetUserCommand } from './get-user.command';
-import { PaginationResponseDto } from '../../../../common/pagination/pagination-response-dto';
+import { PaginationResponseDto } from 'src/common/pagination/pagination-response-dto';
 
 export class GetUserCommandHandler {
   constructor(
@@ -25,7 +25,7 @@ export class GetUserCommandHandler {
     const whereClause: FindOptionsWhere<User> = {};
 
     if (name) {
-      whereClause.name = name;
+      whereClause.name = ILike(`%${name}%`);
     }
 
     if (role) {
