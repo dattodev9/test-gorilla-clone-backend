@@ -1,13 +1,16 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CodingQuestion, TestCase } from 'src/entities/coding-question.entity';
+import {
+  CodingQuestion,
+  RunCodingQuestionResponse,
+  TestCase,
+} from 'src/entities/coding-question.entity';
 import { RunCodingQuestionCommand } from './run-coding-question.command';
 import { CodingQuestionNotFound } from '../../update-coding-question/error/coding-question-not-found.error';
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { SubmitType } from '../controller/run-coding-question-request.dto';
 
 export class RunCodingQuestionCommandHandler {
   constructor(
@@ -25,17 +28,15 @@ export class RunCodingQuestionCommandHandler {
       throw new CodingQuestionNotFound();
     }
 
-    const { code, type } = command;
-    const testCases =
-      type === SubmitType.RUN
-        ? codingQuestion.testCases.slice(0, 3)
-        : codingQuestion.testCases;
+    const { code } = command;
 
     const result = await this.runCodeInDocker(
       code,
-      testCases,
+      codingQuestion.testCases,
       codingQuestion.callSnippet,
     );
+
+    result.nearestFailedTestCase = null;
 
     return result;
   }
@@ -44,7 +45,7 @@ export class RunCodingQuestionCommandHandler {
     code: string,
     testCases: TestCase[],
     callSnippet: string,
-  ) {
+  ): Promise<RunCodingQuestionResponse> {
     const sandboxBaseDir = path.join(process.cwd(), 'sandbox');
     const uniqueId = crypto.randomUUID();
     const sandboxDir = path.join(sandboxBaseDir, uniqueId);
@@ -198,6 +199,7 @@ export class RunCodingQuestionCommandHandler {
               try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 const errResult = JSON.parse(stdout);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 resolve(errResult);
               } catch {
                 // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
@@ -207,6 +209,7 @@ export class RunCodingQuestionCommandHandler {
               try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 const result = JSON.parse(stdout);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 resolve(result);
               } catch {
                 // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors

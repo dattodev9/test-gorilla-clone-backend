@@ -1,6 +1,21 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Test } from './test.entity';
 
+export type NearestFailedTestCase = {
+  key: number;
+  input: string;
+  expected: string;
+  actual: string;
+};
+
+export type RunCodingQuestionResponse = {
+  nearestFailedTestCase: NearestFailedTestCase | null;
+  error: string;
+  passed: boolean;
+  testCasePassed: number;
+  totalTestCase: number;
+};
+
 export type TestCase = {
   key: number;
   input: string;
