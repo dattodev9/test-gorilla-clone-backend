@@ -9,6 +9,12 @@ import { OneChoiceQuestion } from './one-choice-question.entity';
 import { MultipleChoiceQuestion } from './multiple-choice-question.entity';
 import { CodingQuestion } from './coding-question.entity';
 
+export enum QuestionType {
+  ONE_CHOICE_QUESTION = 'one-choice-question',
+  MULTIPLE_CHOICE_QUESTION = 'multiple-choice-question',
+  CODING_QUESTION = 'coding-question',
+}
+
 export enum TestStatus {
   DRAFT = 'draft',
   PUBLISHED = 'published',
