@@ -61,6 +61,14 @@ export class GetQuestionByTestIdCommandHandler {
       },
     });
 
+    if (!command?.questionType) {
+      return this.mergeAndSortArrayByOrder(
+        oneChoiceQuestionData,
+        multipleChoiceQuestionData,
+        codingQuestionData,
+      );
+    }
+
     return this.mergeAndSortArrayByOrder(
       command.questionType?.includes(QuestionType.ONE_CHOICE_QUESTION)
         ? oneChoiceQuestionData

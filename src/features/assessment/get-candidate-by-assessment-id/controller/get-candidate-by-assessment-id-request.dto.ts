@@ -4,7 +4,6 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  Length,
   Max,
   Min,
 } from 'class-validator';
@@ -13,7 +12,6 @@ import { Transform, Type } from 'class-transformer';
 
 export class GetCandidateByAssessmentIdRequestDto extends PaginationRequestDto {
   @IsString()
-  @Length(2, 100)
   @IsOptional()
   name?: string;
 

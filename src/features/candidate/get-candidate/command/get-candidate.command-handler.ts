@@ -1,12 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Candidate,
-  CandidateStatus,
-} from '../../../../entities/candidate.entity';
+import { Candidate, CandidateStatus } from 'src/entities/candidate.entity';
 import { Repository } from 'typeorm';
 import { GetCandidateCommand } from './get-candidate.command';
-import { camelToSnakeCase } from '../../../../shared/camel-to-snake-case';
-import { AppDataSource } from '../../../../shared/app-data-source';
+import { camelToSnakeCase } from 'src/shared/camel-to-snake-case';
+import { AppDataSource } from 'src/shared/app-data-source';
 
 export class GetCandidateCommandHandler {
   constructor(
